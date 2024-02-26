@@ -1,7 +1,11 @@
 {
 	"name": "frontend",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"private": true,
+	"author": {
+		"name": "oceanbao",
+		"url": "https://twitter.com/oceanbao"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -9,7 +13,14 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"**/*.{svelte,ts,json}": [
+			"pnpm format",
+			"pnpm lint"
+		]
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -21,6 +32,8 @@
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
+		"husky": "^9.0.11",
+		"lint-staged": "^15.2.2",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"svelte": "^4.2.7",
