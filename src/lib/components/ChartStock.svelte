@@ -61,7 +61,7 @@
 		candleSeries.priceScale().applyOptions({
 			scaleMargins: {
 				top: 0,
-				bottom: 0.7
+				bottom: 0.3
 			}
 		});
 		candleSeries.setData(candleData);
@@ -76,7 +76,7 @@
 		candleSeries.priceScale().applyOptions({
 			scaleMargins: {
 				top: 0,
-				bottom: 0.7
+				bottom: 0.3
 			}
 		});
 		lineSma5Series.setData(lineDataSma5);
@@ -91,7 +91,7 @@
 		candleSeries.priceScale().applyOptions({
 			scaleMargins: {
 				top: 0,
-				bottom: 0.7
+				bottom: 0.3
 			}
 		});
 		lineSma20Series.setData(lineDataSma20);
@@ -161,11 +161,11 @@
 			priceLineVisible: false,
 			priceScaleId: '2',
 			color: 'rgb(255,0,0)',
-			lineWidth: 2
+			lineWidth: 1
 		});
 		lineK.priceScale().applyOptions({
 			scaleMargins: {
-				top: 0.7,
+				top: 0.9,
 				bottom: 0
 			}
 		});
@@ -176,11 +176,11 @@
 			priceLineVisible: false,
 			priceScaleId: '2',
 			color: 'rgb(50,205,50)',
-			lineWidth: 2
+			lineWidth: 1
 		});
 		lineD.priceScale().applyOptions({
 			scaleMargins: {
-				top: 0.7,
+				top: 0.9,
 				bottom: 0
 			}
 		});
@@ -191,11 +191,11 @@
 			priceLineVisible: false,
 			priceScaleId: '2',
 			color: 'rgb(126, 87, 194)',
-			lineWidth: 2
+			lineWidth: 1
 		});
 		lineJ.priceScale().applyOptions({
 			scaleMargins: {
-				top: 0.7,
+				top: 0.9,
 				bottom: 0
 			}
 		});
@@ -208,8 +208,8 @@
 		});
 		lineMacdHist.priceScale().applyOptions({
 			scaleMargins: {
-				top: 0.4,
-				bottom: 0.3
+				top: 0.6,
+				bottom: 0.1
 			}
 		});
 		lineMacdHist.setData(lineDataMacdHist);
@@ -223,8 +223,8 @@
 		});
 		lineMacdDiff.priceScale().applyOptions({
 			scaleMargins: {
-				top: 0.4,
-				bottom: 0.3
+				top: 0.6,
+				bottom: 0.1
 			}
 		});
 		lineMacdDiff.setData(lineDataMacdDiff);
@@ -239,8 +239,8 @@
 		});
 		lineMacdDea.priceScale().applyOptions({
 			scaleMargins: {
-				top: 0.4,
-				bottom: 0.3
+				top: 0.6,
+				bottom: 0.1
 			}
 		});
 		lineMacdDea.setData(lineDataMacdDea);
