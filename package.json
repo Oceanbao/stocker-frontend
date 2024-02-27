@@ -49,7 +49,9 @@
 	"dependencies": {
 		"bits-ui": "^0.18.2",
 		"clsx": "^2.1.0",
+		"lightweight-charts": "^4.1.3",
 		"lucide-svelte": "^0.341.0",
+		"pocketbase": "^0.21.1",
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.2.0"
 	}
