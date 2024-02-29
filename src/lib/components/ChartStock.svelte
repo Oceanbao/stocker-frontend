@@ -311,6 +311,6 @@
 	}
 </script>
 
-<div id="chart-container" bind:this={chartElement} class="h-[50vh] w-full">
+<div id="chart-container" bind:this={chartElement} class="h-[90%] w-full">
 	<div class="left-1 top-1 border-slate-800 border rounded text-center" bind:this={legendElement} />
 </div>

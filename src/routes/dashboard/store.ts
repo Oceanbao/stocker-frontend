@@ -6,3 +6,6 @@ export const sModalData = writable({
 	name: '',
 	etf: false
 });
+
+export const sDeletedStocks = writable<string[]>([]);
+export const sTrackedStocks = writable<string[]>([]);

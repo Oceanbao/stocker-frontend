@@ -3,10 +3,10 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async (event) => {
 	const user = event.locals.user;
 
-	//TODO: better handle err at frontend
+	//TODO: better handle err at frontend - USE ZOD
 	const recordsScreen = event.locals.pb
 		?.send('/screen', { method: 'GET' })
-		.then((r) => r.screens)
+		.then((r) => r.data)
 		.catch((err) => {
 			return { ...err };
 		});
@@ -20,6 +20,6 @@ export const load: LayoutServerLoad = async (event) => {
 
 	return {
 		user: undefined,
-		records: undefined
+		recordsScreen: undefined
 	};
 };

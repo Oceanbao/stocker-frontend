@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
-	import { sModalData } from './store';
+	import { sModalData, sDeletedStocks } from './store';
 
 	const demoRecord = {
 		daily: {
@@ -53,8 +53,42 @@
 		$sModalData.open = true;
 	}
 
-	// records = records.map((x) => ({ code: x.code, rsi: x.rsi, name: x.name, cap: x.cap }));
-	// records.sort((a, b) => (a.cap > b.cap ? -1 : b.cap > a.cap ? 1 : 0));
+	async function trackStock(ticker: string) {
+		// const baseUrl = '/api/stock';
+		// const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+		// 	method: 'DELETE'
+		// });
+		// try {
+		// 	const body = await resp.json();
+		// 	if (!body.error) {
+		// 		console.log(body.data);
+		// 		// NOTE: important place and steps to make deletion takes affect.
+		// 		$sTrackedStocks.push(ticker);
+		// 		records = records.filter((x) => !$sDeletedStocks.includes(x.stock.ticker));
+		// 	}
+		// } catch (err) {
+		// 	console.log(err);
+		// }
+		return ticker;
+	}
+
+	async function deleteStock(ticker: string) {
+		const baseUrl = '/api/stock';
+		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+			method: 'DELETE'
+		});
+		try {
+			const body = await resp.json();
+			if (!body.error) {
+				console.log(body.data);
+				// NOTE: important place and steps to make deletion takes affect.
+				$sDeletedStocks.push(ticker);
+				records = records.filter((x) => !$sDeletedStocks.includes(x.stock.ticker));
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
 </script>
 
 <div class="grid place-items-center lg:max-w-3xl lg:mx-auto">
@@ -67,11 +101,13 @@
 				<Table.Head class="text-center">KDJ</Table.Head>
 				<Table.Head class="text-center">Turnover (%)</Table.Head>
 				<Table.Head class="text-center">EPS ($)</Table.Head>
+				<Table.Head class="text-center">Track</Table.Head>
+				<Table.Head class="text-center">Dele</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each records as record, idx}
-				<Table.Row data-index={idx}>
+			{#each records as record (record.stock.ticker)}
+				<Table.Row>
 					<Table.Cell class="font-medium">
 						<Button
 							variant="secondary"
@@ -84,6 +120,15 @@
 					<Table.Cell class="text-right">{record.kdj.toFixed(4)}</Table.Cell>
 					<Table.Cell class="text-right">{record.daily.turnover.toFixed(4)}</Table.Cell>
 					<Table.Cell class="text-right">{record.stock.eps.toFixed(4)}</Table.Cell>
+					<Table.Cell class="text-right">
+						<Button variant="default" on:click={() => trackStock(record.stock.ticker)}>track</Button
+						>
+					</Table.Cell>
+					<Table.Cell class="text-right">
+						<Button variant="destructive" on:click={() => deleteStock(record.stock.ticker)}
+							>delete</Button
+						>
+					</Table.Cell>
 				</Table.Row>
 			{/each}
 		</Table.Body>

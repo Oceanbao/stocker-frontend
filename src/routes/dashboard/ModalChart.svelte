@@ -126,18 +126,19 @@
 <Dialog.Root open={$sModalData.open} onOpenChange={() => ($sModalData.open = false)}>
 	<Dialog.Content
 		class={cn(
-			'border border-blue-400 rounded-lg h-[70vh] w-[95vw] lg:h-[80%] lg:max-w-[80%] auto-rows-auto overflow-y-auto',
+			'border border-blue-400 rounded-lg h-screen w-screen lg:h-[90%] lg:max-w-[90%]',
 			'[&_.lucide-x]:text-blue-400',
 			'[&_.lucide-x]:w-10',
 			'[&_.lucide-x]:h-10'
 		)}
 	>
 		<Dialog.Header>
-			<Dialog.Title class="text-sm sm:text-xl">{$sModalData.ticker} {$sModalData.name}</Dialog.Title
+			<Dialog.Title class="text-sm sm:text-xl"
+				>{$sModalData.ticker} - {$sModalData.name}</Dialog.Title
 			>
 			<Dialog.Description class="text-xs sm:text-lg"
-				>Latest close price with RSI indicator.</Dialog.Description
-			>
+				>Latest close price with KDJ indicator.
+			</Dialog.Description>
 			<!-- {#if $sModalData.trackable} -->
 			<!-- 	<form method="POST" action="?/track" use:enhance={submitTrackAction} class="flex flex-col"> -->
 			<!-- 		<Button -->
@@ -159,34 +160,34 @@
 			<!-- 		{/if} -->
 			<!-- 	</form> -->
 			<!-- {/if} -->
+			<Dialog.Description class="grid w-full h-full place-items-center">
+				{#if loadingRequest}
+					<Loader2 class="animate-spin w-32 h-32" style="animation-direction: reverse" />
+				{:else}
+					<ChartStock
+						{candleData}
+						lineDataK={kdjData.map((x) => ({ time: x.time, value: x.k }))}
+						lineDataD={kdjData.map((x) => ({ time: x.time, value: x.d }))}
+						lineDataJ={kdjData.map((x) => ({ time: x.time, value: x.j }))}
+						lineDataMacdHist={macdData.map((x) => ({
+							time: x.time,
+							color: x.hist > 0 ? 'green' : 'red',
+							value: x.hist
+						}))}
+						lineDataMacdDiff={macdData.map((x) => ({
+							time: x.time,
+							value: x.diff
+						}))}
+						lineDataMacdDea={macdData.map((x) => ({
+							time: x.time,
+							value: x.dea
+						}))}
+						lineDataSma5={sma5Data}
+						lineDataSma20={sma20Data}
+					/>
+				{/if}
+			</Dialog.Description>
 		</Dialog.Header>
-		<div class="grid w-full h-full place-items-center">
-			{#if loadingRequest}
-				<Loader2 class="animate-spin w-32 h-32" style="animation-direction: reverse" />
-			{:else}
-				<ChartStock
-					{candleData}
-					lineDataK={kdjData.map((x) => ({ time: x.time, value: x.k }))}
-					lineDataD={kdjData.map((x) => ({ time: x.time, value: x.d }))}
-					lineDataJ={kdjData.map((x) => ({ time: x.time, value: x.j }))}
-					lineDataMacdHist={macdData.map((x) => ({
-						time: x.time,
-						color: x.hist > 0 ? 'green' : 'red',
-						value: x.hist
-					}))}
-					lineDataMacdDiff={macdData.map((x) => ({
-						time: x.time,
-						value: x.diff
-					}))}
-					lineDataMacdDea={macdData.map((x) => ({
-						time: x.time,
-						value: x.dea
-					}))}
-					lineDataSma5={sma5Data}
-					lineDataSma20={sma20Data}
-				/>
-			{/if}
-		</div>
 		<!-- <div class="grid gap-4 py-4"> -->
 		<!-- 	<div class="grid grid-cols-4 items-center gap-4"> -->
 		<!-- 		<Label class="text-right">Name</Label> -->
@@ -202,3 +203,14 @@
 		<!-- </Dialog.Footer> -->
 	</Dialog.Content>
 </Dialog.Root>
+
+<style>
+	@media only screen and (max-width: 600px) {
+		:global([data-dialog-close]) {
+			top: 93%;
+			left: 45%;
+			z-index: 50;
+			width: fit-content;
+		}
+	}
+</style>
