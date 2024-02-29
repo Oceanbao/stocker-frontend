@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
-	import { sModalData, sDeletedStocks } from './store';
+	import { sModalData, sDeletedStocks, sTrackedStocks } from './store';
 
 	const demoRecord = {
 		daily: {
@@ -53,25 +53,6 @@
 		$sModalData.open = true;
 	}
 
-	async function trackStock(ticker: string) {
-		// const baseUrl = '/api/stock';
-		// const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
-		// 	method: 'DELETE'
-		// });
-		// try {
-		// 	const body = await resp.json();
-		// 	if (!body.error) {
-		// 		console.log(body.data);
-		// 		// NOTE: important place and steps to make deletion takes affect.
-		// 		$sTrackedStocks.push(ticker);
-		// 		records = records.filter((x) => !$sDeletedStocks.includes(x.stock.ticker));
-		// 	}
-		// } catch (err) {
-		// 	console.log(err);
-		// }
-		return ticker;
-	}
-
 	async function deleteStock(ticker: string) {
 		const baseUrl = '/api/stock';
 		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
@@ -84,6 +65,25 @@
 				// NOTE: important place and steps to make deletion takes affect.
 				$sDeletedStocks.push(ticker);
 				records = records.filter((x) => !$sDeletedStocks.includes(x.stock.ticker));
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	async function trackStock(ticker: string) {
+		const baseUrl = '/api/track';
+		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+			method: 'POST'
+		});
+		try {
+			const body = await resp.json();
+			if (!body.error) {
+				console.log(body.data);
+				// NOTE: important place and steps to make deletion takes affect.
+				$sTrackedStocks.push(ticker);
+				// FIXME:
+				document.querySelector(`tr p[data-tracking='${ticker}']`)?.classList.add('text-red-500');
 			}
 		} catch (err) {
 			console.log(err);
@@ -114,7 +114,12 @@
 							class="w-[100px]"
 							on:click={() => openDialog(record.stock.ticker, record.stock.name)}
 						>
-							{record.stock.name}
+							<p
+								class={`${$sTrackedStocks.includes(record.stock.ticker) ? 'text-red-500' : ''}`}
+								data-tracking={record.stock.ticker}
+							>
+								{record.stock.name}
+							</p>
 						</Button>
 					</Table.Cell>
 					<Table.Cell class="text-right">{record.kdj.toFixed(4)}</Table.Cell>

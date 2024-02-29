@@ -9,7 +9,7 @@ export const POST: RequestHandler = async (event) => {
 		});
 	}
 
-	const response = await event.locals.pb?.send(`/track/${ticker}`, {
+	const response = await event.locals.pb?.send(`/tracking/${ticker}`, {
 		method: 'POST'
 	});
 

@@ -11,15 +11,24 @@ export const load: LayoutServerLoad = async (event) => {
 			return { ...err };
 		});
 
+	const recordsTracking = event.locals.pb
+		?.send('/tracking/all', { method: 'GET' })
+		.then((r) => r.data)
+		.catch((err) => {
+			return { ...err };
+		});
+
 	if (user) {
 		return {
 			user,
-			recordsScreen
+			recordsScreen,
+			recordsTracking: await recordsTracking
 		};
 	}
 
 	return {
 		user: undefined,
-		recordsScreen: undefined
+		recordsScreen: undefined,
+		recordsTracking: undefined
 	};
 };
