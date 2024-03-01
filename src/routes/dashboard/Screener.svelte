@@ -126,7 +126,7 @@
 	}
 </script>
 
-<div class="grid place-items-center lg:max-w-3xl lg:mx-auto">
+<div class="grid place-items-center lg:max-w-6xl lg:mx-auto">
 	<p>Total: {records.length}</p>
 	<Table.Root>
 		<Table.Caption>Today's Screens</Table.Caption>

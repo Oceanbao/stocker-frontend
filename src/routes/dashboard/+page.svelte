@@ -49,9 +49,7 @@
 				</Tabs.List>
 				<Tabs.Content value="screener" class="space-y-4">
 					{#await data.recordsScreen}
-						<div class="grid">
-							<SkeletonA num={3} />
-						</div>
+						<SkeletonA num={3} />
 					{:then value}
 						<Screener records={value} />
 					{:catch error}
