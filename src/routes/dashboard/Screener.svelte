@@ -2,6 +2,8 @@
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
 	import { sModalData, sDeletedStocks, sTrackedStocks } from './store';
+	import { Loader2 } from 'lucide-svelte';
+	import { removeItem } from '$lib/utils';
 
 	const demoRecord = {
 		daily: {
@@ -47,6 +49,9 @@
 
 	export let records: (typeof demoRecord)[];
 
+	let loadingTrackStock = '';
+	let loadingDeleteStock = '';
+
 	function openDialog(ticker: string, name: string) {
 		$sModalData.ticker = ticker;
 		$sModalData.name = name;
@@ -54,6 +59,7 @@
 	}
 
 	async function deleteStock(ticker: string) {
+		loadingDeleteStock = ticker;
 		const baseUrl = '/api/stock';
 		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
 			method: 'DELETE'
@@ -68,25 +74,54 @@
 			}
 		} catch (err) {
 			console.log(err);
+		} finally {
+			loadingDeleteStock = '';
 		}
 	}
 
 	async function trackStock(ticker: string) {
+		loadingTrackStock = ticker;
+
+		if (!$sTrackedStocks.includes(ticker)) {
+			const baseUrl = '/api/track';
+			const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+				method: 'POST'
+			});
+			try {
+				const body = await resp.json();
+				if (!body.error) {
+					console.log(body.data);
+					// NOTE: important place and steps to make deletion takes affect.
+					$sTrackedStocks.push(ticker);
+					// FIXME:
+					document.querySelector(`tr p[data-tracking='${ticker}']`)?.classList.add('text-red-500');
+				}
+			} catch (err) {
+				console.log(err);
+			} finally {
+				loadingTrackStock = '';
+			}
+
+			return;
+		}
+
 		const baseUrl = '/api/track';
 		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
-			method: 'POST'
+			method: 'DELETE'
 		});
 		try {
 			const body = await resp.json();
 			if (!body.error) {
 				console.log(body.data);
 				// NOTE: important place and steps to make deletion takes affect.
-				$sTrackedStocks.push(ticker);
+				$sTrackedStocks = removeItem($sTrackedStocks, ticker);
 				// FIXME:
-				document.querySelector(`tr p[data-tracking='${ticker}']`)?.classList.add('text-red-500');
+				document.querySelector(`tr p[data-tracking='${ticker}']`)?.classList.remove('text-red-500');
 			}
 		} catch (err) {
 			console.log(err);
+		} finally {
+			loadingTrackStock = '';
 		}
 	}
 </script>
@@ -99,8 +134,13 @@
 			<Table.Row>
 				<Table.Head class="text-center">Ticker</Table.Head>
 				<Table.Head class="text-center">KDJ</Table.Head>
+				<Table.Head class="text-center">TradedCap</Table.Head>
+				<Table.Head class="text-center">NAPS</Table.Head>
+				<Table.Head class="text-center">NetProfit</Table.Head>
 				<Table.Head class="text-center">Turnover (%)</Table.Head>
 				<Table.Head class="text-center">EPS ($)</Table.Head>
+				<Table.Head class="text-center">PER</Table.Head>
+				<Table.Head class="text-center">ROE (%)</Table.Head>
 				<Table.Head class="text-center">Track</Table.Head>
 				<Table.Head class="text-center">Dele</Table.Head>
 			</Table.Row>
@@ -122,17 +162,45 @@
 							</p>
 						</Button>
 					</Table.Cell>
-					<Table.Cell class="text-right">{record.kdj.toFixed(4)}</Table.Cell>
-					<Table.Cell class="text-right">{record.daily.turnover.toFixed(4)}</Table.Cell>
-					<Table.Cell class="text-right">{record.stock.eps.toFixed(4)}</Table.Cell>
+					<Table.Cell class="text-right">{record.kdj.toFixed(2)}</Table.Cell>
+					<Table.Cell class="text-right"
+						>{(Math.pow(2, record.stock.tradecap) / 100_000_000).toFixed(2)}</Table.Cell
+					>
+					<Table.Cell class="text-right">{record.stock.netassetpershare.toFixed(2)}</Table.Cell>
+					<Table.Cell class="text-right"
+						>{(record.stock.netprofit / 100_000_000).toFixed(2)}</Table.Cell
+					>
+					<Table.Cell class="text-right">{record.daily.turnover.toFixed(2)}</Table.Cell>
+					<Table.Cell class="text-right">{record.stock.eps.toFixed(2)}</Table.Cell>
+					<Table.Cell class="text-right">{record.stock.priceperearning / 100}</Table.Cell>
+					<Table.Cell class="text-right">{record.stock.roe.toFixed(2)}</Table.Cell>
 					<Table.Cell class="text-right">
-						<Button variant="default" on:click={() => trackStock(record.stock.ticker)}>track</Button
+						<Button
+							variant="default"
+							on:click={() => trackStock(record.stock.ticker)}
+							disabled={loadingTrackStock === record.stock.ticker}
+							class="w-full"
 						>
+							{#if loadingTrackStock === record.stock.ticker}
+								<Loader2 class="animate-spin" />
+							{:else}
+								<p>track</p>
+							{/if}
+						</Button>
 					</Table.Cell>
 					<Table.Cell class="text-right">
-						<Button variant="destructive" on:click={() => deleteStock(record.stock.ticker)}
-							>delete</Button
+						<Button
+							variant="destructive"
+							on:click={() => deleteStock(record.stock.ticker)}
+							disabled={loadingDeleteStock === record.stock.ticker}
+							class="w-full"
 						>
+							{#if loadingDeleteStock === record.stock.ticker}
+								<Loader2 class="animate-spin" />
+							{:else}
+								<p>delete</p>
+							{/if}
+						</Button>
 					</Table.Cell>
 				</Table.Row>
 			{/each}

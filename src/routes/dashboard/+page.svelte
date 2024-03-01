@@ -14,7 +14,6 @@
 	import Screener from './Screener.svelte';
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
 	import { sTrackedStocks } from './store';
-	// import { Loader2 } from 'lucide-svelte';
 
 	export let data;
 

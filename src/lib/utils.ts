@@ -3,6 +3,14 @@ import { twMerge } from 'tailwind-merge';
 import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
 
+export function removeItem<T>(arr: Array<T>, value: T): Array<T> {
+	const index = arr.indexOf(value);
+	if (index > -1) {
+		arr.splice(index, 1);
+	}
+	return arr;
+}
+
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }

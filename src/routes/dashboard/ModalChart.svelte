@@ -81,52 +81,12 @@
 	$: if ($sModalData.open) {
 		openDialog();
 	}
-
-	// const submitTrackAction: SubmitFunction = (event) => {
-	// 	loadingTrackAction = true;
-
-	// 	event.formData.set('ticker', $sModalData.ticker);
-	// 	event.formData.set('name', $sModalData.name);
-
-	// 	return async ({ result }) => {
-	// 		// await update();
-	// 		switch (result.type) {
-	// 			case 'success':
-	// 				console.log(result.data);
-	// 				thisStockTracked = true;
-	// 				if (result.data) {
-	// 					const newTracked = {
-	// 						...result.data.data,
-	// 						change: 0
-	// 					};
-	// 					$sTrackData = [...$sTrackData, newTracked];
-	// 					actionResult = 'Tracking stock successful.';
-	// 				} else {
-	// 					actionResult = 'Unexpected missing data but action successful.';
-	// 				}
-	// 				await applyAction(result);
-	// 				break;
-	// 			case 'failure':
-	// 				console.log(result.data);
-	// 				actionResult = result.data?.message;
-	// 				break;
-	// 			case 'error':
-	// 				console.log(result.error);
-	// 				actionResult = result.error?.message;
-	// 				break;
-	// 			default:
-	// 				console.log('Unexpected action result.');
-	// 				actionResult = 'Unexpected action result.';
-	// 		}
-	// 		loadingTrackAction = false;
-	// 	};
-	// };
 </script>
 
 <Dialog.Root open={$sModalData.open} onOpenChange={() => ($sModalData.open = false)}>
 	<Dialog.Content
 		class={cn(
-			'border border-blue-400 rounded-lg h-screen w-screen lg:h-[90%] lg:max-w-[90%]',
+			'border border-blue-400 rounded-lg h-[100dvh] w-[100dvw] lg:h-[90%] lg:max-w-[90%]',
 			'[&_.lucide-x]:text-blue-400',
 			'[&_.lucide-x]:w-10',
 			'[&_.lucide-x]:h-10'
@@ -139,27 +99,6 @@
 			<Dialog.Description class="text-xs sm:text-lg"
 				>Latest close price with KDJ indicator.
 			</Dialog.Description>
-			<!-- {#if $sModalData.trackable} -->
-			<!-- 	<form method="POST" action="?/track" use:enhance={submitTrackAction} class="flex flex-col"> -->
-			<!-- 		<Button -->
-			<!-- 			variant="ghost" -->
-			<!-- 			class="bg-blue-600 text-white self-center h-6 w-20 sm:w-20 sm:h-8 sm:self-end md:mt-4" -->
-			<!-- 			disabled={thisStockTracked} -->
-			<!-- 		> -->
-			<!-- 			{#if loadingTrackAction} -->
-			<!-- 				<Loader2 class="animate-spin" /> -->
-			<!-- 			{/if} -->
-			<!-- 			{#if thisStockTracked} -->
-			<!-- 				Tracking -->
-			<!-- 			{:else} -->
-			<!-- 				Track -->
-			<!-- 			{/if} -->
-			<!-- 		</Button> -->
-			<!-- 		{#if actionResult} -->
-			<!-- 			<span class="text-red-500">{actionResult}</span> -->
-			<!-- 		{/if} -->
-			<!-- 	</form> -->
-			<!-- {/if} -->
 			<Dialog.Description class="grid w-full h-full place-items-center">
 				{#if loadingRequest}
 					<Loader2 class="animate-spin w-32 h-32" style="animation-direction: reverse" />
@@ -188,19 +127,6 @@
 				{/if}
 			</Dialog.Description>
 		</Dialog.Header>
-		<!-- <div class="grid gap-4 py-4"> -->
-		<!-- 	<div class="grid grid-cols-4 items-center gap-4"> -->
-		<!-- 		<Label class="text-right">Name</Label> -->
-		<!-- 		<Input id="name" value="Pedro Duarte" class="col-span-3" /> -->
-		<!-- 	</div> -->
-		<!-- 	<div class="grid grid-cols-4 items-center gap-4"> -->
-		<!-- 		<Label class="text-right">Username</Label> -->
-		<!-- 		<Input id="username" value="@peduarte" class="col-span-3" /> -->
-		<!-- 	</div> -->
-		<!-- </div> -->
-		<!-- <Dialog.Footer> -->
-		<!-- 	<Button type="submit">Save changes</Button> -->
-		<!-- </Dialog.Footer> -->
 	</Dialog.Content>
 </Dialog.Root>
 
