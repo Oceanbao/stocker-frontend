@@ -166,13 +166,13 @@
 			<Table.Row>
 				<Table.Head class="text-center">Ticker</Table.Head>
 				<Table.Head class="text-center">KDJ</Table.Head>
-				<Table.Head class="text-center">TradedCap</Table.Head>
-				<Table.Head class="text-center">NAPS</Table.Head>
-				<Table.Head class="text-center">NetProfit</Table.Head>
-				<Table.Head class="text-center">Turnover (%)</Table.Head>
+				<Table.Head class="text-center">Cap</Table.Head>
 				<Table.Head class="text-center">EPS ($)</Table.Head>
 				<Table.Head class="text-center">PER</Table.Head>
 				<Table.Head class="text-center">ROE (%)</Table.Head>
+				<Table.Head class="text-center">Net Profit</Table.Head>
+				<Table.Head class="text-center">Gross (%)</Table.Head>
+				<Table.Head class="text-center">Debt (%)</Table.Head>
 				<Table.Head class="text-center">Track</Table.Head>
 				<Table.Head class="text-center">Dele</Table.Head>
 			</Table.Row>
@@ -194,18 +194,40 @@
 							</p>
 						</Button>
 					</Table.Cell>
-					<Table.Cell class="text-right">{record.kdj.toFixed(2)}</Table.Cell>
-					<Table.Cell class="text-right"
-						>{(Math.pow(2, record.stock.tradecap) / 100_000_000).toFixed(2)}</Table.Cell
-					>
-					<Table.Cell class="text-right">{record.stock.netassetpershare.toFixed(2)}</Table.Cell>
-					<Table.Cell class="text-right"
-						>{(record.stock.netprofit / 100_000_000).toFixed(2)}</Table.Cell
-					>
-					<Table.Cell class="text-right">{record.daily.turnover.toFixed(2)}</Table.Cell>
-					<Table.Cell class="text-right">{record.stock.eps.toFixed(2)}</Table.Cell>
-					<Table.Cell class="text-right">{record.stock.priceperearning / 100}</Table.Cell>
-					<Table.Cell class="text-right">{record.stock.roe.toFixed(2)}</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">kdj</span>
+						<p>
+							{record.kdj.toFixed(2)}
+						</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">cap</span>
+						<p>{(Math.pow(2, record.stock.tradecap) / 100_000_000).toFixed(2)}</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">esp</span>
+						<p>{record.stock.eps.toFixed(2)}</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">pe</span>
+						<p>{record.stock.priceperearning / 100}</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">roe</span>
+						<p>{record.stock.roe.toFixed(2)}</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">netp</span>
+						<p>{(record.stock.netprofit / 100_000_000).toFixed(2)}</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">gross</span>
+						<p>{record.stock.grossprofitmargin.toFixed(2)}</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">debt</span>
+						<p>{record.stock.debtratio.toFixed(2)}</p>
+					</Table.Cell>
 					<Table.Cell class="text-right">
 						<Button
 							variant="default"
