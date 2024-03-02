@@ -4,6 +4,7 @@
 	import { sModalData, sDeletedStocks, sTrackedStocks } from './store';
 	import { Loader2 } from 'lucide-svelte';
 	import { removeItem } from '$lib/utils';
+	import { toast } from 'svelte-sonner';
 
 	const demoRecord = {
 		daily: {
@@ -60,68 +61,99 @@
 
 	async function deleteStock(ticker: string) {
 		loadingDeleteStock = ticker;
+		const loadingToast = toast.loading(`Deleting '${ticker}' and all its data.`);
+
 		const baseUrl = '/api/stock';
 		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
 			method: 'DELETE'
 		});
+
+		toast.dismiss(loadingToast);
 		try {
 			const body = await resp.json();
-			if (!body.error) {
-				console.log(body.data);
+			if (body.message !== 'error') {
 				// NOTE: important place and steps to make deletion takes affect.
 				$sDeletedStocks.push(ticker);
 				records = records.filter((x) => !$sDeletedStocks.includes(x.stock.ticker));
+				toast.success(`Deleted '${ticker}'`);
+			} else {
+				toast.error(`Error: ${body.error}`);
 			}
 		} catch (err) {
-			console.log(err);
+			toast.error(`Error: ${err}`);
 		} finally {
 			loadingDeleteStock = '';
 		}
 	}
 
-	async function trackStock(ticker: string) {
+	async function trackStockHandler(ticker: string) {
 		loadingTrackStock = ticker;
 
-		if (!$sTrackedStocks.includes(ticker)) {
-			const baseUrl = '/api/track';
-			const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
-				method: 'POST'
-			});
-			try {
-				const body = await resp.json();
-				if (!body.error) {
-					console.log(body.data);
-					// NOTE: important place and steps to make deletion takes affect.
-					$sTrackedStocks.push(ticker);
-					// FIXME:
-					document.querySelector(`tr p[data-tracking='${ticker}']`)?.classList.add('text-red-500');
+		if ($sTrackedStocks.includes(ticker)) {
+			toast.promise(unTrackStock(ticker), {
+				loading: 'Untracking...',
+				success: (data) => {
+					return `ticker ${ticker} untracked (${JSON.stringify(data)})`;
+				},
+				error: (err) => {
+					return `Error: ${JSON.stringify(err)}`;
 				}
-			} catch (err) {
-				console.log(err);
-			} finally {
-				loadingTrackStock = '';
-			}
-
+			});
 			return;
 		}
 
+		toast.promise(trackStock(ticker), {
+			loading: 'Tracking...',
+			success: (data) => {
+				return `ticker ${ticker} tracked (${JSON.stringify(data)})`;
+			},
+			error: (err) => {
+				return `Error: ${JSON.stringify(err)}`;
+			}
+		});
+	}
+
+	async function trackStock(ticker: string) {
+		const baseUrl = '/api/track';
+		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+			method: 'POST'
+		});
+		//FIXME: the location of this is vital, fix this.
+		loadingTrackStock = '';
+		try {
+			const body = await resp.json();
+			//FIXME: need to revamp and cleanup how API communicates.
+			if (body.message !== 'error') {
+				// NOTE: important place and steps to make deletion takes affect.
+				$sTrackedStocks.push(ticker);
+				// FIXME:
+				document.querySelector(`tr p[data-tracking='${ticker}']`)?.classList.add('text-red-500');
+				return Promise.resolve(body.data);
+			}
+			return Promise.reject(body.error);
+		} catch (err) {
+			return Promise.reject(err);
+		}
+	}
+
+	async function unTrackStock(ticker: string) {
 		const baseUrl = '/api/track';
 		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
 			method: 'DELETE'
 		});
+		loadingTrackStock = '';
 		try {
 			const body = await resp.json();
-			if (!body.error) {
-				console.log(body.data);
+			if (body.message !== 'error') {
 				// NOTE: important place and steps to make deletion takes affect.
 				$sTrackedStocks = removeItem($sTrackedStocks, ticker);
 				// FIXME:
 				document.querySelector(`tr p[data-tracking='${ticker}']`)?.classList.remove('text-red-500');
+				return Promise.resolve(body.data);
 			}
+			return Promise.reject(body.error);
 		} catch (err) {
-			console.log(err);
-		} finally {
-			loadingTrackStock = '';
+			return Promise.reject(err);
 		}
 	}
 </script>
@@ -177,7 +209,7 @@
 					<Table.Cell class="text-right">
 						<Button
 							variant="default"
-							on:click={() => trackStock(record.stock.ticker)}
+							on:click={() => trackStockHandler(record.stock.ticker)}
 							disabled={loadingTrackStock === record.stock.ticker}
 							class="w-full"
 						>

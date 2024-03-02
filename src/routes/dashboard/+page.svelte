@@ -17,7 +17,7 @@
 
 	export let data;
 
-	// FIXME
+	// FIXME: later
 	if (data.recordsTracking) {
 		data.recordsTracking.forEach((x) => {
 			$sTrackedStocks.push(x.ticker);
@@ -42,11 +42,13 @@
 			<div class="flex items-center justify-between space-y-2">
 				<h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
 			</div>
+
 			<Tabs.Root value="screener" class="space-y-4">
 				<Tabs.List class="overflow-x-auto w-full justify-start">
 					<Tabs.Trigger value="screener">Screener</Tabs.Trigger>
-					<Tabs.Trigger value="notifications" disabled>Notifications</Tabs.Trigger>
+					<Tabs.Trigger value="tracking" disabled>Tracking</Tabs.Trigger>
 				</Tabs.List>
+
 				<Tabs.Content value="screener" class="space-y-4">
 					{#await data.recordsScreen}
 						<SkeletonA num={3} />
@@ -56,6 +58,16 @@
 						<p>{error.message}</p>
 					{/await}
 				</Tabs.Content>
+
+				<!-- <Tabs.Content value="tracking" class="space-y-4"> -->
+				<!-- 	{#await data.recordsTrack} -->
+				<!-- 		<SkeletonA num={3} /> -->
+				<!-- 	{:then value} -->
+				<!-- 		<Screener records={value} /> -->
+				<!-- 	{:catch error} -->
+				<!-- 		<p>{error.message}</p> -->
+				<!-- 	{/await} -->
+				<!-- </Tabs.Content> -->
 			</Tabs.Root>
 		</div>
 	</div>
