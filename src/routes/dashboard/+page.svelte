@@ -16,7 +16,6 @@
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
 
 	export let data;
-	console.log('PAGE');
 </script>
 
 <ModalChart />

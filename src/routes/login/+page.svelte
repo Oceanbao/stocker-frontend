@@ -29,11 +29,17 @@
 				</div>
 				<div class="grid gap-2">
 					<Label for="username">Username</Label>
-					<Input id="username" type="text" name="username" required />
+					<Input id="username" type="text" name="username" required autocomplete="username" />
 				</div>
 				<div class="grid gap-2">
 					<Label for="password">Password</Label>
-					<Input id="password" type="password" name="password" required />
+					<Input
+						id="password"
+						type="password"
+						name="password"
+						required
+						autocomplete="current-password"
+					/>
 				</div>
 				{#if form?.invalid}
 					<p class="error">Valid username and password is required.</p>

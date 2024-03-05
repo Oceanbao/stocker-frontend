@@ -1,21 +1,4 @@
-import { writable } from 'svelte/store';
-
-const demoDailyData = {
-	ticker: '0.002002',
-	date: '2024-01-18 00:00:00.000Z',
-	open: 0.58,
-	high: 0.58,
-	low: 0.58,
-	close: 0.58,
-	volume: 107356,
-	value: 6226648,
-	volatility: 0,
-	pchange: -4.92,
-	change: -0.03,
-	turnover: 0.35
-};
-
-export type TDailyData = typeof demoDailyData;
+import { derived, writable } from 'svelte/store';
 
 const demoStock = {
 	ticker: '0.002002',
@@ -42,12 +25,12 @@ const demoStock = {
 	debtratio: 48.5783103042
 };
 
-export type TStock = typeof demoStock;
+type TStockType = 'SCREEN' | 'TRACK';
 
-export type TScreen = {
-	daily: TDailyData;
+export type TStock = {
 	kdj: string;
-	stock: TStock;
+	stock: typeof demoStock;
+	type: TStockType;
 };
 
 export const sModalData = writable({
@@ -57,5 +40,12 @@ export const sModalData = writable({
 	etf: false
 });
 
-export const sDeletedStocks = writable<string[]>([]);
-export const sTrackedStocks = writable<string[]>([]);
+export const sTrackAndScreenStocks = writable<TStock[]>([]);
+
+export const sScreenStocks = derived(sTrackAndScreenStocks, ($sTrackAndScreenStocks) =>
+	$sTrackAndScreenStocks.filter((x) => x.type === 'SCREEN')
+);
+
+export const sTrackStocks = derived(sTrackAndScreenStocks, ($sTrackAndScreenStocks) =>
+	$sTrackAndScreenStocks.filter((x) => x.type === 'SCREEN')
+);
