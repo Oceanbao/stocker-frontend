@@ -14,8 +14,29 @@
 	import Screener from './Screener.svelte';
 	import Tracking from './Tracking.svelte';
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
+	import { type TStockPage, stockStore } from './store';
+	import type { TScreen, TStock } from '$lib/server/types';
 
 	export let data;
+
+	const allStocks: TStockPage[] = [];
+	data.recordsScreen.forEach((x: TScreen) => {
+		allStocks.push({
+			stock: x.stock,
+			kdj: x.kdj,
+			tracked: data.recordsTracking.some((xx: TStock) => xx.ticker === x.stock.ticker)
+		});
+	});
+	data.recordsTracking.forEach((x: TStock) => {
+		if (!allStocks.some((xx) => xx.stock.ticker === x.ticker)) {
+			allStocks.push({
+				stock: x,
+				kdj: 0,
+				tracked: true
+			});
+		}
+	});
+	$stockStore = [...allStocks.values()];
 </script>
 
 <ModalChart />
@@ -46,7 +67,7 @@
 					{#await data.recordsScreen}
 						<SkeletonA num={3} />
 					{:then value}
-						<Screener records={value} />
+						<Screener thenData={value} />
 					{:catch error}
 						<p>{error.message}</p>
 					{/await}
@@ -56,7 +77,7 @@
 					{#await data.recordsTracking}
 						<SkeletonA num={3} />
 					{:then value}
-						<Tracking records={value} />
+						<Tracking thenData={value} />
 					{:catch error}
 						<p>{error.message}</p>
 					{/await}

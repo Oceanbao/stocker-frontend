@@ -1,12 +1,14 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
-	import { type TStock, sModalData, sDeletedStocks, sTrackedStocks } from './store';
+	import { type TStockPage, sModalData, stockStore } from './store';
 	import { Loader2 } from 'lucide-svelte';
-	import { removeItem } from '$lib/utils';
 	import { toast } from 'svelte-sonner';
 
-	export let records: TStock[];
+	export let thenData;
+	console.debug(thenData);
+
+	const trackStocks = stockStore.getReadStocksTracked();
 
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';
@@ -29,9 +31,7 @@
 		try {
 			const body = await resp.json();
 			if (body.message !== 'error') {
-				// NOTE: important place and steps to make deletion takes affect.
-				$sDeletedStocks.push(ticker);
-				records = records.filter((x) => !$sDeletedStocks.includes(x.ticker));
+				stockStore.deleteByTicker(ticker);
 				toast.success(`Deleted '${ticker}'`);
 			} else {
 				toast.error(`Error: ${body.error}`);
@@ -44,62 +44,31 @@
 		}
 	}
 
-	async function trackStockHandler(ticker: string) {
-		loadingTrackStock = ticker;
+	async function trackStockHandler(stock: TStockPage) {
+		loadingTrackStock = stock.stock.ticker;
 
-		if ($sTrackedStocks.includes(ticker)) {
-			toast.promise(unTrackStock(ticker), {
-				loading: 'Untracking...',
-				success: (data) => {
-					return `ticker ${ticker} untracked (${JSON.stringify(data)})`;
-				},
-				error: (err) => {
-					return `Error: ${JSON.stringify(err)}`;
-				}
-			});
-		} else {
-			toast.promise(trackStock(ticker), {
-				loading: 'tracking...',
-				success: (data) => {
-					return `ticker ${ticker} tracked (${JSON.stringify(data)})`;
-				},
-				error: (err) => {
-					return `Error: ${JSON.stringify(err)}`;
-				}
-			});
-		}
-
+		toast.promise(unTrackStock(stock), {
+			loading: 'Untracking...',
+			success: (data) => {
+				return `ticker ${stock.stock.ticker} untracked (${JSON.stringify(data)})`;
+			},
+			error: (err) => {
+				return `Error: ${JSON.stringify(err)}`;
+			}
+		});
 		loadingTrackStock = '';
 	}
 
-	async function trackStock(ticker: string) {
+	async function unTrackStock(stock: TStockPage) {
 		const baseUrl = '/api/track';
-		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
-			method: 'POST'
-		});
-		try {
-			const body = await resp.json();
-			//FIXME: need to revamp and cleanup how API communicates.
-			if (body.message !== 'error') {
-				$sTrackedStocks = [...$sTrackedStocks, ticker];
-				return Promise.resolve(body.data);
-			}
-			return Promise.reject(body.error);
-		} catch (err) {
-			return Promise.reject(err);
-		}
-	}
-
-	async function unTrackStock(ticker: string) {
-		const baseUrl = '/api/track';
-		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+		const resp = await fetch(`${baseUrl}?ticker=${stock.stock.ticker}`, {
 			method: 'DELETE'
 		});
 		try {
 			const body = await resp.json();
 			if (body.message !== 'error') {
 				// NOTE: important place and steps to make deletion takes affect.
-				$sTrackedStocks = removeItem($sTrackedStocks, ticker);
+				stockStore.unTrackByStock(stock);
 				return Promise.resolve(body.data);
 			}
 			return Promise.reject(body.error);
@@ -110,9 +79,9 @@
 </script>
 
 <div class="grid place-items-center lg:max-w-6xl lg:mx-auto">
-	<p>Total: {records.length}</p>
+	<p>Total: {$trackStocks.length}</p>
 	<Table.Root>
-		<Table.Caption>Today's Screens</Table.Caption>
+		<Table.Caption>Tracked stocks</Table.Caption>
 		<Table.Header>
 			<Table.Row>
 				<Table.Head class="text-center">Ticker</Table.Head>
@@ -128,69 +97,64 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each records as record (record.ticker)}
+			{#each $trackStocks as stock (stock.stock.ticker)}
 				<Table.Row>
 					<Table.Cell class="font-medium">
 						<Button
 							variant="secondary"
 							class="w-[100px]"
-							on:click={() => openDialog(record.ticker, record.name)}
+							on:click={() => openDialog(stock.stock.ticker, stock.stock.name)}
 						>
-							<p class={`${$sTrackedStocks.includes(record.ticker) ? 'text-red-500' : ''}`}>
-								{record.name}
+							<p class={`${stock.tracked ? 'text-red-500' : ''}`}>
+								{stock.stock.name}
 							</p>
 						</Button>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">cap</span>
-						<p>{(Math.pow(2, record.tradecap) / 100_000_000).toFixed(2)}</p>
+						<p>{(Math.pow(2, stock.stock.tradecap) / 100_000_000).toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">esp</span>
-						<p>{record.eps.toFixed(2)}</p>
+						<p>{stock.stock.eps.toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">pe</span>
-						<p>{record.priceperearning / 100}</p>
+						<p>{stock.stock.priceperearning / 100}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">roe</span>
-						<p>{record.roe.toFixed(2)}</p>
+						<p>{stock.stock.roe.toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">netp</span>
-						<p>{(record.netprofit / 100_000_000).toFixed(2)}</p>
+						<p>{(stock.stock.netprofit / 100_000_000).toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">gross</span>
-						<p>{record.grossprofitmargin.toFixed(2)}</p>
+						<p>{stock.stock.grossprofitmargin.toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">debt</span>
-						<p>{record.debtratio.toFixed(2)}</p>
+						<p>{stock.stock.debtratio.toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right">
-						<Button
-							variant="default"
-							on:click={() => trackStockHandler(record.ticker)}
-							disabled={loadingTrackStock === record.ticker}
-							class="w-full"
-						>
-							{#if loadingTrackStock === record.ticker}
+						<Button variant="default" on:click={() => trackStockHandler(stock)} class="w-full">
+							{#if loadingTrackStock === stock.stock.ticker}
 								<Loader2 class="animate-spin" />
 							{:else}
-								<p>track</p>
+								<p>untrack</p>
 							{/if}
 						</Button>
 					</Table.Cell>
 					<Table.Cell class="text-right">
 						<Button
 							variant="destructive"
-							on:click={() => deleteStock(record.ticker)}
-							disabled={loadingDeleteStock === record.ticker}
+							on:click={() => deleteStock(stock.stock.ticker)}
+							disabled={loadingDeleteStock === stock.stock.ticker}
 							class="w-full"
 						>
-							{#if loadingDeleteStock === record.ticker}
+							{#if loadingDeleteStock === stock.stock.ticker}
 								<Loader2 class="animate-spin" />
 							{:else}
 								<p>delete</p>
