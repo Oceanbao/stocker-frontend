@@ -12,6 +12,7 @@
 	import Search from './Search.svelte';
 	import UserNav from './UserNav.svelte';
 	import Screener from './Screener.svelte';
+	import Tracking from './Tracking.svelte';
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
 	import { sTrackedStocks } from './store';
 
@@ -46,7 +47,7 @@
 			<Tabs.Root value="screener" class="space-y-4">
 				<Tabs.List class="overflow-x-auto w-full justify-start">
 					<Tabs.Trigger value="screener">Screener</Tabs.Trigger>
-					<Tabs.Trigger value="tracking" disabled>Tracking</Tabs.Trigger>
+					<Tabs.Trigger value="tracking">Tracking</Tabs.Trigger>
 				</Tabs.List>
 
 				<Tabs.Content value="screener" class="space-y-4">
@@ -59,19 +60,16 @@
 					{/await}
 				</Tabs.Content>
 
-				<!-- <Tabs.Content value="tracking" class="space-y-4"> -->
-				<!-- 	{#await data.recordsTrack} -->
-				<!-- 		<SkeletonA num={3} /> -->
-				<!-- 	{:then value} -->
-				<!-- 		<Screener records={value} /> -->
-				<!-- 	{:catch error} -->
-				<!-- 		<p>{error.message}</p> -->
-				<!-- 	{/await} -->
-				<!-- </Tabs.Content> -->
+				<Tabs.Content value="tracking" class="space-y-4">
+					{#await data.recordsTracking}
+						<SkeletonA num={3} />
+					{:then value}
+						<Tracking records={value} />
+					{:catch error}
+						<p>{error.message}</p>
+					{/await}
+				</Tabs.Content>
 			</Tabs.Root>
 		</div>
 	</div>
 </main>
-
-<style>
-</style>

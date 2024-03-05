@@ -1,12 +1,12 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
-	import { type TScreen, sModalData, sDeletedStocks, sTrackedStocks } from './store';
+	import { type TStock, sModalData, sDeletedStocks, sTrackedStocks } from './store';
 	import { Loader2 } from 'lucide-svelte';
 	import { removeItem } from '$lib/utils';
 	import { toast } from 'svelte-sonner';
 
-	export let records: TScreen[];
+	export let records: TStock[];
 
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';

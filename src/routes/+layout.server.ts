@@ -12,7 +12,7 @@ export const load: LayoutServerLoad = async (event) => {
 		});
 
 	const recordsTracking = event.locals.pb
-		?.send('/tracking/all', { method: 'GET' })
+		?.send('/tracking', { method: 'GET' })
 		.then((r) => r.data)
 		.catch((err) => {
 			return { ...err };
