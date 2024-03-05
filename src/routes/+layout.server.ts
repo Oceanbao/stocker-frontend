@@ -21,7 +21,7 @@ export const load: LayoutServerLoad = async (event) => {
 	if (user) {
 		return {
 			user,
-			recordsScreen,
+			recordsScreen: await recordsScreen,
 			recordsTracking: await recordsTracking
 		};
 	}

@@ -14,16 +14,9 @@
 	import Screener from './Screener.svelte';
 	import Tracking from './Tracking.svelte';
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
-	import { sTrackedStocks } from './store';
 
 	export let data;
-
-	// FIXME: later
-	if (data.recordsTracking) {
-		data.recordsTracking.forEach((x) => {
-			$sTrackedStocks.push(x.ticker);
-		});
-	}
+	console.log('PAGE');
 </script>
 
 <ModalChart />
