@@ -19,7 +19,7 @@ export function createStoreStocks(initStocks: TStockPage[]) {
 	const store = writable(initStocks);
 
 	function getReadStocks() {
-		return derived(store, ($store) => $store);
+		return derived(store, ($store) => $store.filter((x) => x.kdj !== 0));
 	}
 
 	function getReadStocksTracked() {

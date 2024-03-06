@@ -5,6 +5,24 @@
 
 	export let username: string;
 	export let useremail: string;
+
+	async function runDeleHandler() {
+		const baseUrl = '/api/dele/updatestocks';
+		const resp = await fetch(`${baseUrl}`, {
+			method: 'GET'
+		});
+
+		try {
+			const body = await resp.json();
+			if (body.message !== 'error') {
+				console.log(body.data);
+			} else {
+				console.log(body.error);
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
 </script>
 
 <DropdownMenu.Root>
@@ -37,7 +55,7 @@
 		<!-- 		Settings -->
 		<!-- 		<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut> -->
 		<!-- 	</DropdownMenu.Item> -->
-		<!-- 	<DropdownMenu.Item>New Team</DropdownMenu.Item> -->
+		<DropdownMenu.Item on:click={runDeleHandler}>Run dele</DropdownMenu.Item>
 		<!-- </DropdownMenu.Group> -->
 		<!-- <DropdownMenu.Separator /> -->
 		<a href="/logout">

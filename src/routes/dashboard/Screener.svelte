@@ -153,7 +153,7 @@
 						<p>{(Math.pow(2, stock.stock.tradecap) / 100_000_000).toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
-						<span class="absolute top-1 right-1 text-xs text-gray-600">esp</span>
+						<span class="absolute top-1 right-1 text-xs text-gray-600">eps</span>
 						<p>{stock.stock.eps.toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
