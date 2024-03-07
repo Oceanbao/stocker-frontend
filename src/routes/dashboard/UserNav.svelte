@@ -7,7 +7,7 @@
 	export let useremail: string;
 
 	async function runDeleHandler() {
-		const baseUrl = '/api/dele/updatestocks';
+		const baseUrl = '/api/dele';
 		const resp = await fetch(`${baseUrl}`, {
 			method: 'GET'
 		});

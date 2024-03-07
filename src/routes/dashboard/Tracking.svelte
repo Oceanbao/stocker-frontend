@@ -5,8 +5,7 @@
 	import { Loader2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 
-	export let thenData;
-	console.debug(thenData);
+	export const thenData = undefined;
 
 	const trackStocks = stockStore.getReadStocksTracked();
 
