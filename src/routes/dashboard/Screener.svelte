@@ -108,7 +108,7 @@
 	}
 </script>
 
-<div class="grid place-items-center lg:max-w-6xl lg:mx-auto">
+<div class="grid place-items-center lg:max-w-7xl lg:mx-auto">
 	<p>Total: {$screenStocks.length}</p>
 	<Table.Root>
 		<Table.Caption>Today's Screens</Table.Caption>
@@ -116,6 +116,7 @@
 			<Table.Row>
 				<Table.Head class="text-center">Ticker</Table.Head>
 				<Table.Head class="text-center">KDJ</Table.Head>
+				<Table.Head class="text-center">Sector / Total</Table.Head>
 				<Table.Head class="text-center">Cap</Table.Head>
 				<Table.Head class="text-center">EPS ($)</Table.Head>
 				<Table.Head class="text-center">PER</Table.Head>
@@ -148,8 +149,17 @@
 						</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">sec</span>
+						<p>
+							{stock.stock.sector} ({stock.stock.sectortotal})
+						</p>
+					</Table.Cell>
+					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">cap</span>
-						<p>{(Math.pow(2, stock.stock.tradecap) / 100_000_000).toFixed(2)}</p>
+						<p>
+							{(Math.pow(2, stock.stock.tradecap) / 100_000_000).toFixed(2)} ({stock.stock
+								.ranktotalcap})
+						</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">eps</span>
@@ -157,19 +167,22 @@
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">pe</span>
-						<p>{stock.stock.priceperearning / 100}</p>
+						<p>{stock.stock.priceperearning / 100} ({stock.stock.rankper})</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">roe</span>
-						<p>{stock.stock.roe.toFixed(2)}</p>
+						<p>{stock.stock.roe.toFixed(2)} ({stock.stock.rankroe})</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">netp</span>
-						<p>{(stock.stock.netprofit / 100_000_000).toFixed(2)}</p>
+						<p>
+							{(stock.stock.netprofit / 100_000_000).toFixed(2)} ({stock.stock.ranknetprofit}-{stock
+								.stock.ranknetmargin})
+						</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">gross</span>
-						<p>{stock.stock.grossprofitmargin.toFixed(2)}</p>
+						<p>{stock.stock.grossprofitmargin.toFixed(2)} ({stock.stock.rankgrossmargin})</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">debt</span>

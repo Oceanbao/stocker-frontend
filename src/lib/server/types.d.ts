@@ -36,7 +36,17 @@ const demoScreen = {
 		totalrevenue: 3005862559.21,
 		totalrevenuechange: 19.4736612536,
 		grossprofitmargin: -0.4946788962,
-		debtratio: 56.5867218278
+		debtratio: 56.5867218278,
+		ranktotalcap: 0,
+		ranknetasset: 0,
+		ranknetprofit: 0,
+		rankgrossmargin: 0,
+		rankper: 0,
+		rankpbr: 0,
+		ranknetmargin: 0,
+		rankroe: 0,
+		sector: '',
+		sectortotal: 0
 	}
 };
 
