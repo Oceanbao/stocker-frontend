@@ -45,8 +45,6 @@
 	}
 
 	async function trackStockHandler(stock: TStockPage) {
-		loadingTrackStock = stock.stock.ticker;
-
 		if (stock.tracked) {
 			toast.promise(unTrackStock(stock), {
 				loading: 'Untracking...',
@@ -68,15 +66,15 @@
 				}
 			});
 		}
-
-		loadingTrackStock = '';
 	}
 
 	async function trackStock(stock: TStockPage) {
+		loadingTrackStock = stock.stock.ticker;
 		const baseUrl = '/api/track';
 		const resp = await fetch(`${baseUrl}?ticker=${stock.stock.ticker}`, {
 			method: 'POST'
 		});
+		loadingTrackStock = '';
 		try {
 			const body = await resp.json();
 			//FIXME: need to revamp and cleanup how API communicates.
@@ -87,10 +85,13 @@
 			return Promise.reject(body.error);
 		} catch (err) {
 			return Promise.reject(err);
+		} finally {
+			loadingTrackStock = '';
 		}
 	}
 
 	async function unTrackStock(stock: TStockPage) {
+		loadingTrackStock = stock.stock.ticker;
 		const baseUrl = '/api/track';
 		const resp = await fetch(`${baseUrl}?ticker=${stock.stock.ticker}`, {
 			method: 'DELETE'
@@ -105,6 +106,8 @@
 			return Promise.reject(body.error);
 		} catch (err) {
 			return Promise.reject(err);
+		} finally {
+			loadingTrackStock = '';
 		}
 	}
 </script>
@@ -131,7 +134,12 @@
 		</Table.Header>
 		<Table.Body>
 			{#each $screenStocks as stock (stock.stock.ticker)}
-				<Table.Row>
+				<Table.Row
+					class={loadingTrackStock === stock.stock.ticker ||
+					loadingDeleteStock === stock.stock.ticker
+						? 'blur-sm pointer-events-none'
+						: ''}
+				>
 					<Table.Cell class="font-medium relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">{stock.kdj.toFixed(2)}</span>
 						<Button

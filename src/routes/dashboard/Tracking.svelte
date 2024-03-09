@@ -44,8 +44,6 @@
 	}
 
 	async function trackStockHandler(stock: TStockPage) {
-		loadingTrackStock = stock.stock.ticker;
-
 		toast.promise(unTrackStock(stock), {
 			loading: 'Untracking...',
 			success: (data) => {
@@ -55,10 +53,10 @@
 				return `Error: ${JSON.stringify(err)}`;
 			}
 		});
-		loadingTrackStock = '';
 	}
 
 	async function unTrackStock(stock: TStockPage) {
+		loadingTrackStock = stock.stock.ticker;
 		const baseUrl = '/api/track';
 		const resp = await fetch(`${baseUrl}?ticker=${stock.stock.ticker}`, {
 			method: 'DELETE'
@@ -73,6 +71,8 @@
 			return Promise.reject(body.error);
 		} catch (err) {
 			return Promise.reject(err);
+		} finally {
+			loadingTrackStock = '';
 		}
 	}
 </script>
@@ -98,7 +98,12 @@
 		</Table.Header>
 		<Table.Body>
 			{#each $trackStocks as stock (stock.stock.ticker)}
-				<Table.Row>
+				<Table.Row
+					class={loadingTrackStock === stock.stock.ticker ||
+					loadingDeleteStock === stock.stock.ticker
+						? 'blur-sm pointer-events-none'
+						: ''}
+				>
 					<Table.Cell class="font-medium">
 						<Button
 							variant="secondary"

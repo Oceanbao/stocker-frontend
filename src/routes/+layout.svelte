@@ -3,6 +3,6 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 </script>
 
-<Toaster richColors />
+<Toaster richColors expand={true} />
 
 <slot />
