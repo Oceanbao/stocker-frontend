@@ -4,8 +4,9 @@
 	import { type TStockPage, sModalData, stockStore } from './store';
 	import { Loader2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import type { TScreen } from '$lib/server/types';
 
-	export const thenData = undefined;
+	export let thenData: TScreen[];
 
 	const screenStocks = stockStore.getReadStocksScreen();
 
@@ -115,7 +116,7 @@
 		<Table.Header>
 			<Table.Row>
 				<Table.Head class="text-center">Ticker</Table.Head>
-				<Table.Head class="text-center">KDJ</Table.Head>
+				<Table.Head class="text-center">Value</Table.Head>
 				<Table.Head class="text-center">Sector / Total</Table.Head>
 				<Table.Head class="text-center">Cap</Table.Head>
 				<Table.Head class="text-center">EPS ($)</Table.Head>
@@ -131,7 +132,8 @@
 		<Table.Body>
 			{#each $screenStocks as stock (stock.stock.ticker)}
 				<Table.Row>
-					<Table.Cell class="font-medium">
+					<Table.Cell class="font-medium relative">
+						<span class="absolute top-1 right-1 text-xs text-gray-600">{stock.kdj.toFixed(2)}</span>
 						<Button
 							variant="secondary"
 							class="w-[100px]"
@@ -143,14 +145,15 @@
 						</Button>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
-						<span class="absolute top-1 right-1 text-xs text-gray-600">kdj</span>
-						<p>
-							{Number(stock.kdj).toFixed(2)}
-						</p>
+						<span class="absolute top-1 right-1 text-xs text-gray-600">$</span>
+						{@const val = thenData.find((x) => x.stock.ticker === stock.stock.ticker)}
+						{#if val}
+							<p>{(val.daily.value / 100_000_000).toFixed(2)}</p>
+						{/if}
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">sec</span>
-						<p>
+						<p class="text-xs">
 							{stock.stock.sector} ({stock.stock.sectortotal})
 						</p>
 					</Table.Cell>
