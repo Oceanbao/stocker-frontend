@@ -1,3 +1,4 @@
+import { SECTORS } from '$lib/server/sectors';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async (event) => {
@@ -18,17 +19,28 @@ export const load: LayoutServerLoad = async (event) => {
 			return { ...err };
 		});
 
+	const defaultSector = SECTORS[0];
+
+	const recordsSector = event.locals.pb
+		?.send(`/sector/${defaultSector}`, { method: 'GET' })
+		.then((r) => r.data)
+		.catch((err) => {
+			return { ...err };
+		});
+
 	if (user) {
 		return {
 			user,
 			recordsScreen: await recordsScreen,
-			recordsTracking: await recordsTracking
+			recordsTracking: await recordsTracking,
+			recordsSector: await recordsSector
 		};
 	}
 
 	return {
 		user: undefined,
 		recordsScreen: undefined,
-		recordsTracking: undefined
+		recordsTracking: undefined,
+		recordsSector: undefined
 	};
 };

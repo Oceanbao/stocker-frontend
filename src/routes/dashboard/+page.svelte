@@ -16,23 +16,37 @@
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
 	import { type TStockPage, stockStore } from './store';
 	import type { TScreen, TStock } from '$lib/server/types';
+	import Sector from './Sector.svelte';
 
 	export let data;
 
+	// FIXME this pile of shit
 	const allStocks: TStockPage[] = [];
-	data.recordsScreen.forEach((x: TScreen) => {
+	data.recordsScreen.forEach((stockScreen: TScreen) => {
 		allStocks.push({
-			stock: x.stock,
-			kdj: x.kdj,
-			tracked: data.recordsTracking.some((xx: TStock) => xx.ticker === x.stock.ticker)
+			stock: stockScreen.stock,
+			kdj: stockScreen.kdj,
+			tracked: data.recordsTracking.some((x: TStock) => x.ticker === stockScreen.stock.ticker),
+			sector: stockScreen.stock.sector
 		});
 	});
-	data.recordsTracking.forEach((x: TStock) => {
-		if (!allStocks.some((xx) => xx.stock.ticker === x.ticker)) {
+	data.recordsSector.forEach((stockSector: TStock) => {
+		if (!allStocks.some((x) => x.stock.ticker === stockSector.ticker)) {
 			allStocks.push({
-				stock: x,
+				stock: stockSector,
 				kdj: 0,
-				tracked: true
+				tracked: data.recordsTracking.some((x: TStock) => x.ticker === stockSector.ticker),
+				sector: stockSector.sector
+			});
+		}
+	});
+	data.recordsTracking.forEach((stockTracking: TStock) => {
+		if (!allStocks.some((x) => x.stock.ticker === stockTracking.ticker)) {
+			allStocks.push({
+				stock: stockTracking,
+				kdj: 0,
+				tracked: true,
+				sector: stockTracking.sector
 			});
 		}
 	});
@@ -61,6 +75,7 @@
 				<Tabs.List class="overflow-x-auto w-full justify-start">
 					<Tabs.Trigger value="screener">Screener</Tabs.Trigger>
 					<Tabs.Trigger value="tracking">Tracking</Tabs.Trigger>
+					<Tabs.Trigger value="sector">Sector</Tabs.Trigger>
 				</Tabs.List>
 
 				<Tabs.Content value="screener" class="space-y-4">
@@ -78,6 +93,16 @@
 						<SkeletonA num={3} />
 					{:then value}
 						<Tracking thenData={value} />
+					{:catch error}
+						<p>{error.message}</p>
+					{/await}
+				</Tabs.Content>
+
+				<Tabs.Content value="sector" class="space-y-4">
+					{#await data.recordsSector}
+						<SkeletonA num={3} />
+					{:then value}
+						<Sector thenData={value} />
 					{:catch error}
 						<p>{error.message}</p>
 					{/await}

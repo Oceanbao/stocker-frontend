@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './modelchart.css';
 	// import { applyAction, enhance } from '$app/forms';
 	// import type { SubmitFunction } from '@sveltejs/kit';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -91,6 +92,7 @@
 			'[&_.lucide-x]:w-10',
 			'[&_.lucide-x]:h-10'
 		)}
+		style=""
 	>
 		<Dialog.Header>
 			<Dialog.Title class="text-sm sm:text-xl"
@@ -129,14 +131,3 @@
 		</Dialog.Header>
 	</Dialog.Content>
 </Dialog.Root>
-
-<style>
-	@media only screen and (max-width: 600px) {
-		:global([data-dialog-close]) {
-			top: 93%;
-			left: 45%;
-			z-index: 50;
-			width: fit-content;
-		}
-	}
-</style>

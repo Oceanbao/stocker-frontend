@@ -4,6 +4,7 @@ import type { TStock } from '$lib/server/types';
 
 export type TStockPage = {
 	kdj: number;
+	sector: string;
 	stock: TStock;
 	tracked: boolean;
 };
@@ -18,12 +19,16 @@ export const sModalData = writable({
 export function createStoreStocks(initStocks: TStockPage[]) {
 	const store = writable(initStocks);
 
-	function getReadStocks() {
+	function getReadStocksScreen() {
 		return derived(store, ($store) => $store.filter((x) => x.kdj !== 0));
 	}
 
 	function getReadStocksTracked() {
 		return derived(store, ($store) => $store.filter((x) => x.tracked === true));
+	}
+
+	function getReadStocksSector(sector: string) {
+		return derived(store, ($store) => $store.filter((x) => x.sector === sector));
 	}
 
 	function deleteByTicker(ticker: string) {
@@ -56,8 +61,9 @@ export function createStoreStocks(initStocks: TStockPage[]) {
 
 	return {
 		...store,
-		getReadStocks,
+		getReadStocksScreen,
 		getReadStocksTracked,
+		getReadStocksSector,
 		deleteByTicker,
 		trackByStock,
 		unTrackByStock
