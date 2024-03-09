@@ -1,7 +1,7 @@
 import { SECTORS } from '$lib/server/sectors';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
-export const POST: RequestHandler = async (event) => {
+export const GET: RequestHandler = async (event) => {
 	const sector = event.url.searchParams.get('sector');
 	if (!sector) {
 		return json({

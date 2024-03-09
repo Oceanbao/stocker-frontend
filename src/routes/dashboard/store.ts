@@ -19,6 +19,26 @@ export const sModalData = writable({
 export function createStoreStocks(initStocks: TStockPage[]) {
 	const store = writable(initStocks);
 
+	function addStocks(stocks: TStock[]) {
+		store.update((oldStocks) => {
+			// Check each new stock
+			// if exists, do nothing
+			// else, add as TStockPage object
+			const newStocks: TStockPage[] = [];
+			stocks.forEach((x) => {
+				if (!oldStocks.some((xx) => xx.stock.ticker === x.ticker)) {
+					newStocks.push({
+						stock: x,
+						kdj: 0,
+						tracked: false,
+						sector: x.sector
+					});
+				}
+			});
+			return [...oldStocks, ...newStocks];
+		});
+	}
+
 	function getReadStocksScreen() {
 		return derived(store, ($store) => $store.filter((x) => x.kdj !== 0));
 	}
@@ -61,6 +81,7 @@ export function createStoreStocks(initStocks: TStockPage[]) {
 
 	return {
 		...store,
+		addStocks,
 		getReadStocksScreen,
 		getReadStocksTracked,
 		getReadStocksSector,
