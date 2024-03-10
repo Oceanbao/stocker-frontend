@@ -6,23 +6,43 @@
 	export let username: string;
 	export let useremail: string;
 
-	async function runDeleHandler() {
-		const baseUrl = '/api/dele';
-		const resp = await fetch(`${baseUrl}`, {
-			method: 'GET'
-		});
+	// async function runDeleHandler() {
+	// 	const deleTickers = tickers;
+	// 	const baseUrl = '/api/dele';
+	// 	const resp = await fetch(`${baseUrl}?tickers=${deleTickers}`, {
+	// 		method: 'POST'
+	// 	});
 
-		try {
-			const body = await resp.json();
-			if (body.message !== 'error') {
-				console.log(body.data);
-			} else {
-				console.log(body.error);
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	}
+	// 	try {
+	// 		const body = await resp.json();
+	// 		if (body.message !== 'error') {
+	// 			console.log(body.data);
+	// 		} else {
+	// 			console.log(body.error);
+	// 		}
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// }
+
+	// async function search() {
+	// 	const baseUrl = '/api/stock';
+	// 	const resp = await fetch(`${baseUrl}`, {
+	// 		method: 'GET'
+	// 	});
+
+	// 	try {
+	// 		const body = await resp.json();
+	// 		if (body.message !== 'error') {
+	// 			const tickers = body.data.map((x) => x.ticker).join(',');
+	// 			console.log(tickers);
+	// 		} else {
+	// 			console.log(body.error);
+	// 		}
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// }
 </script>
 
 <DropdownMenu.Root>
@@ -55,7 +75,7 @@
 		<!-- 		Settings -->
 		<!-- 		<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut> -->
 		<!-- 	</DropdownMenu.Item> -->
-		<DropdownMenu.Item on:click={runDeleHandler}>Run dele</DropdownMenu.Item>
+		<!-- <DropdownMenu.Item on:click={runDeleHandler}>Run dele</DropdownMenu.Item> -->
 		<!-- </DropdownMenu.Group> -->
 		<!-- <DropdownMenu.Separator /> -->
 		<a href="/logout">

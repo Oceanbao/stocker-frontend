@@ -48,7 +48,11 @@ export function createStoreStocks(initStocks: TStockPage[]) {
 	}
 
 	function getReadStocksSector(sector: string) {
-		return derived(store, ($store) => $store.filter((x) => x.sector === sector));
+		return derived(store, ($store) => {
+			return $store
+				.filter((x) => x.sector === sector)
+				.sort((a, b) => a.stock.ranktotalcap - b.stock.ranktotalcap);
+		});
 	}
 
 	function deleteByTicker(ticker: string) {
