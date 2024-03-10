@@ -4,6 +4,7 @@
 	import { type TStockPage, sModalData, stockStore } from './store';
 	import { Loader2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import { Dialog } from 'bits-ui';
 
 	export const thenData = undefined;
 
@@ -11,6 +12,7 @@
 
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';
+	let openModal = false;
 
 	function openDialog(ticker: string, name: string) {
 		$sModalData.ticker = ticker;
@@ -75,10 +77,37 @@
 			loadingTrackStock = '';
 		}
 	}
+
+	function openModalHandler() {
+		openModal = !openModal;
+	}
 </script>
+
+<Dialog.Root open={openModal}>
+	<Dialog.Content class="border border-blue-400 rounded-lg h-[90%] max-w-[90%]">
+		<Table.Root>
+			<Table.Header>
+				<Table.Row>
+					<Table.Head class="w-[100px]">Ticker</Table.Head>
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#each $trackStocks as stock (stock.stock.ticker)}
+					<Table.Row>
+						<Table.Cell class="font-medium">{stock.stock.name}<br />{stock.stock.ticker}</Table.Cell
+						>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+	</Dialog.Content>
+</Dialog.Root>
 
 <div class="grid place-items-center lg:max-w-7xl lg:mx-auto">
 	<p>Total: {$trackStocks.length}</p>
+	<Button variant="secondary" class="hidden md:flex w-[100px]" on:click={openModalHandler}>
+		<p>Open Modal</p>
+	</Button>
 	<Table.Root>
 		<Table.Caption>Tracked stocks</Table.Caption>
 		<Table.Header>

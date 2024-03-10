@@ -12,6 +12,7 @@
 
 	let sector = SECTORS[0];
 	let sectorFetched = [SECTORS[0]];
+	let loadingSectorData = false;
 
 	$: sectorStocks = stockStore.getReadStocksSector(sector);
 
@@ -116,6 +117,7 @@
 	}
 
 	async function changeSectorHandler(v: Selected<string | unknown> | undefined) {
+		loadingSectorData = true;
 		if (v) {
 			const sectorSelected = v.value as string;
 
@@ -144,6 +146,7 @@
 
 			sector = sectorSelected;
 		}
+		loadingSectorData = false;
 	}
 </script>
 
@@ -159,7 +162,7 @@
 			{/each}
 		</Select.Content>
 	</Select.Root>
-	<Table.Root>
+	<Table.Root class={`${loadingSectorData ? 'blur-sm pointer-events-none' : ''}`}>
 		<Table.Caption>Sector Stocks</Table.Caption>
 		<Table.Header>
 			<Table.Row>

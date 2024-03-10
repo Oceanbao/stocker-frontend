@@ -71,7 +71,7 @@
 				<h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
 			</div>
 
-			<Tabs.Root value="screener" class="space-y-4">
+			<Tabs.Root class="space-y-4">
 				<Tabs.List class="overflow-x-auto w-full justify-start">
 					<Tabs.Trigger value="screener">Screener</Tabs.Trigger>
 					<Tabs.Trigger value="tracking">Tracking</Tabs.Trigger>
