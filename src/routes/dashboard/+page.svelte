@@ -1,19 +1,19 @@
 <script lang="ts">
 	// import { applyAction, enhance } from '$app/forms';
 
+	import SkeletonA from '$lib/components/SkeletonA.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import type { TScreen, TStock } from '$lib/server/types';
 
-	import ModalChart from './ModalChart.svelte';
 	// import { cn, diffDay } from '$lib/utils';
 	import DashboardMainNav from './MainNav.svelte';
-	import Search from './Search.svelte';
-	import UserNav from './UserNav.svelte';
+	import ModalChart from './ModalChart.svelte';
 	import Screener from './Screener.svelte';
-	import Tracking from './Tracking.svelte';
-	import SkeletonA from '$lib/components/SkeletonA.svelte';
-	import { type TStockPage, stockStore } from './store';
-	import type { TScreen, TStock } from '$lib/server/types';
+	import Search from './Search.svelte';
 	import Sector from './Sector.svelte';
+	import { stockStore, type TStockPage } from './store';
+	import Tracking from './Tracking.svelte';
+	import UserNav from './UserNav.svelte';
 
 	export let data;
 

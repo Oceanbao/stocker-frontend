@@ -1,12 +1,14 @@
 <script lang="ts">
-	import * as Table from '$lib/components/ui/table';
-	import * as Select from '$lib/components/ui/select';
-	import { Button } from '$lib/components/ui/button';
-	import { type TStockPage, sModalData, stockStore } from './store';
+	import type { Selected } from 'bits-ui';
 	import { Heart, Trash2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+
+	import { Button } from '$lib/components/ui/button';
+	import * as Select from '$lib/components/ui/select';
+	import * as Table from '$lib/components/ui/table';
+
 	import { SECTORS } from './sectors';
-	import type { Selected } from 'bits-ui';
+	import { sModalData, stockStore, type TStockPage } from './store';
 
 	export const thenData = undefined;
 

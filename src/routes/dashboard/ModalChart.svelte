@@ -1,22 +1,25 @@
 <script lang="ts">
 	import './modelchart.css';
-	// import { applyAction, enhance } from '$app/forms';
-	// import type { SubmitFunction } from '@sveltejs/kit';
-	import * as Dialog from '$lib/components/ui/dialog';
-	// import { Button } from '$lib/components/ui/button';
-	import ChartStock from '$lib/components/ChartStock.svelte';
+
 	import { Loader2 } from 'lucide-svelte';
-	import { sModalData } from './store';
+
 	import {
 		computeKDJ,
 		computeMACD,
 		computeSMA,
 		type TDaily,
+		type TEma,
 		type TKdj,
-		type TMacd,
-		type TEma
+		type TMacd
 	} from '$lib/charts';
+	// import { Button } from '$lib/components/ui/button';
+	import ChartStock from '$lib/components/ChartStock.svelte';
+	// import { applyAction, enhance } from '$app/forms';
+	// import type { SubmitFunction } from '@sveltejs/kit';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import { cn } from '$lib/utils';
+
+	import { sModalData } from './store';
 
 	let dailyCache: Map<string, Record<string, string>[]> = new Map();
 	let candleData: TDaily[];

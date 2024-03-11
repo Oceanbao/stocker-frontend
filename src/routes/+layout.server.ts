@@ -1,4 +1,5 @@
 import { SECTORS } from '$lib/server/sectors';
+
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async (event) => {

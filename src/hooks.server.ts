@@ -1,6 +1,6 @@
-import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
-import { dev } from '$app/environment';
+import { type Handle, type HandleServerError, redirect } from '@sveltejs/kit';
 
+import { dev } from '$app/environment';
 import { createPB } from '$lib/server/pb';
 
 const PROTECTED_ROUTES: string[] = ['/dashboard'];

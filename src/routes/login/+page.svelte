@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { Loader2 } from 'lucide-svelte';
+
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Loader2 } from 'lucide-svelte';
 
 	export let form;
 

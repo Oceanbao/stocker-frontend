@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	import {
-		createChart,
-		type IChartApi,
-		type LineData,
 		type CandlestickData,
-		type HistogramData,
 		type ChartOptions,
 		ColorType,
+		createChart,
+		type HistogramData,
+		type IChartApi,
+		type LineData,
 		LineStyle
 	} from 'lightweight-charts';
+	import { onMount } from 'svelte';
 
 	export let candleData: CandlestickData[];
 	// export let lineRsiData: LineData[];

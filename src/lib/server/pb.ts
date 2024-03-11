@@ -1,8 +1,8 @@
-import { env } from '$env/dynamic/private';
-import { dev } from '$app/environment';
+import Pocketbase from 'pocketbase';
 import { writable } from 'svelte/store';
 
-import Pocketbase from 'pocketbase';
+import { dev } from '$app/environment';
+import { env } from '$env/dynamic/private';
 
 export type { ClientResponseError } from 'pocketbase';
 

@@ -1,10 +1,12 @@
 <script lang="ts">
-	import * as Table from '$lib/components/ui/table';
-	import { Button } from '$lib/components/ui/button';
-	import { type TStockPage, sModalData, stockStore } from './store';
-	import { toast } from 'svelte-sonner';
-	import type { TScreen } from '$lib/server/types';
 	import { Heart, Trash2 } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
+
+	import { Button } from '$lib/components/ui/button';
+	import * as Table from '$lib/components/ui/table';
+	import type { TScreen } from '$lib/server/types';
+
+	import { sModalData, stockStore, type TStockPage } from './store';
 
 	export let thenData: TScreen[];
 
