@@ -1,11 +1,10 @@
 <script lang="ts">
-	// import { applyAction, enhance } from '$app/forms';
-
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
+	// import { cn, diffDay } from '$lib/utils';
 	import * as Tabs from '$lib/components/ui/tabs';
+	// import { applyAction, enhance } from '$app/forms';
 	import type { TScreen, TStock } from '$lib/server/types';
 
-	// import { cn, diffDay } from '$lib/utils';
 	import DashboardMainNav from './MainNav.svelte';
 	import ModalChart from './ModalChart.svelte';
 	import Screener from './Screener.svelte';
