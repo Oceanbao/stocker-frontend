@@ -124,6 +124,8 @@
 			if (sectorFetched.includes(sectorSelected)) {
 				console.log(sectorFetched);
 				sector = sectorSelected;
+				// FIXME: better way to hanlde signals
+				loadingSectorData = false;
 				return;
 			}
 

@@ -2,7 +2,6 @@
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
 	import { type TStockPage, sModalData, stockStore } from './store';
-	import { Loader2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import type { TScreen } from '$lib/server/types';
 
@@ -129,7 +128,6 @@
 				<Table.Head class="text-center">Gross (%)</Table.Head>
 				<Table.Head class="text-center">Debt (%)</Table.Head>
 				<Table.Head class="text-center">Track</Table.Head>
-				<Table.Head class="text-center">Dele</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
@@ -141,6 +139,14 @@
 						: ''}
 				>
 					<Table.Cell class="font-medium relative">
+						<Button
+							variant="destructive"
+							on:click={() => deleteStock(stock.stock.ticker)}
+							disabled={loadingDeleteStock === stock.stock.ticker}
+							class="absolute top-0 left-0 size-0 text-xs"
+						>
+							X
+						</Button>
 						<span class="absolute top-1 right-1 text-xs text-gray-600">{stock.kdj.toFixed(2)}</span>
 						<Button
 							variant="secondary"
@@ -206,26 +212,10 @@
 							disabled={loadingTrackStock === stock.stock.ticker}
 							class="w-full"
 						>
-							{#if loadingTrackStock === stock.stock.ticker}
-								<Loader2 class="animate-spin" />
-							{:else if stock.tracked}
+							{#if stock.tracked}
 								<p>untrack</p>
 							{:else}
 								<p>track</p>
-							{/if}
-						</Button>
-					</Table.Cell>
-					<Table.Cell class="text-right">
-						<Button
-							variant="destructive"
-							on:click={() => deleteStock(stock.stock.ticker)}
-							disabled={loadingDeleteStock === stock.stock.ticker}
-							class="w-full"
-						>
-							{#if loadingDeleteStock === stock.stock.ticker}
-								<Loader2 class="animate-spin" />
-							{:else}
-								<p>delete</p>
 							{/if}
 						</Button>
 					</Table.Cell>
