@@ -4,6 +4,7 @@
 	import { type TStockPage, sModalData, stockStore } from './store';
 	import { toast } from 'svelte-sonner';
 	import type { TScreen } from '$lib/server/types';
+	import { Heart, Trash2 } from 'lucide-svelte';
 
 	export let thenData: TScreen[];
 
@@ -127,7 +128,6 @@
 				<Table.Head class="text-center">Net Profit</Table.Head>
 				<Table.Head class="text-center">Gross (%)</Table.Head>
 				<Table.Head class="text-center">Debt (%)</Table.Head>
-				<Table.Head class="text-center">Track</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
@@ -139,15 +139,18 @@
 						: ''}
 				>
 					<Table.Cell class="font-medium relative">
-						<Button
-							variant="destructive"
-							on:click={() => deleteStock(stock.stock.ticker)}
-							disabled={loadingDeleteStock === stock.stock.ticker}
-							class="absolute top-0 left-0 size-0 text-xs"
-						>
-							X
-						</Button>
+						<div class="absolute top-0 left-0 flex gap-2">
+							<button on:click={() => deleteStock(stock.stock.ticker)}>
+								<Trash2 color="white" size="1rem" />
+							</button>
+
+							<button on:click={() => trackStockHandler(stock)}>
+								<Heart fill={`${stock.tracked ? 'red' : ''}`} size="1rem" />
+							</button>
+						</div>
+
 						<span class="absolute top-1 right-1 text-xs text-gray-600">{stock.kdj.toFixed(2)}</span>
+
 						<Button
 							variant="secondary"
 							class="w-[100px]"
@@ -204,20 +207,6 @@
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">debt</span>
 						<p>{stock.stock.debtratio.toFixed(2)}</p>
-					</Table.Cell>
-					<Table.Cell class="text-right">
-						<Button
-							variant="default"
-							on:click={() => trackStockHandler(stock)}
-							disabled={loadingTrackStock === stock.stock.ticker}
-							class="w-full"
-						>
-							{#if stock.tracked}
-								<p>untrack</p>
-							{:else}
-								<p>track</p>
-							{/if}
-						</Button>
 					</Table.Cell>
 				</Table.Row>
 			{/each}

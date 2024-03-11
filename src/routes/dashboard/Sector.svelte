@@ -3,7 +3,7 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Button } from '$lib/components/ui/button';
 	import { type TStockPage, sModalData, stockStore } from './store';
-	import { Loader2 } from 'lucide-svelte';
+	import { Heart, Trash2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { SECTORS } from './sectors';
 	import type { Selected } from 'bits-ui';
@@ -177,8 +177,6 @@
 				<Table.Head class="text-center">Net Profit</Table.Head>
 				<Table.Head class="text-center">Gross (%)</Table.Head>
 				<Table.Head class="text-center">Debt (%)</Table.Head>
-				<Table.Head class="text-center">Track</Table.Head>
-				<Table.Head class="text-center">Dele</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
@@ -189,7 +187,17 @@
 						? 'blur-sm pointer-events-none'
 						: ''}
 				>
-					<Table.Cell class="font-medium">
+					<Table.Cell class="font-medium relative">
+						<div class="absolute top-0 left-0 flex gap-2">
+							<button on:click={() => deleteStock(stock.stock.ticker)}>
+								<Trash2 color="white" size="1rem" />
+							</button>
+
+							<button on:click={() => trackStockHandler(stock)}>
+								<Heart fill={`${stock.tracked ? 'red' : ''}`} size="1rem" />
+							</button>
+						</div>
+
 						<Button
 							variant="secondary"
 							class="w-[100px]"
@@ -239,29 +247,6 @@
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">debt</span>
 						<p>{stock.stock.debtratio.toFixed(2)}</p>
-					</Table.Cell>
-					<Table.Cell class="text-right">
-						<Button variant="default" on:click={() => trackStockHandler(stock)} class="w-full">
-							{#if loadingTrackStock === stock.stock.ticker}
-								<Loader2 class="animate-spin" />
-							{:else}
-								<p>untrack</p>
-							{/if}
-						</Button>
-					</Table.Cell>
-					<Table.Cell class="text-right">
-						<Button
-							variant="destructive"
-							on:click={() => deleteStock(stock.stock.ticker)}
-							disabled={loadingDeleteStock === stock.stock.ticker}
-							class="w-full"
-						>
-							{#if loadingDeleteStock === stock.stock.ticker}
-								<Loader2 class="animate-spin" />
-							{:else}
-								<p>delete</p>
-							{/if}
-						</Button>
 					</Table.Cell>
 				</Table.Row>
 			{/each}
