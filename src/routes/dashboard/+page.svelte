@@ -9,10 +9,18 @@
 	import Screener from './Screener.svelte';
 	import Search from './Search.svelte';
 	import Sector from './Sector.svelte';
+	import { sActiveTab } from './store';
 	import Tracking from './Tracking.svelte';
 	import UserNav from './UserNav.svelte';
 
 	export let data;
+
+	const initialTab = 'screener';
+	$sActiveTab = initialTab;
+
+	function onTabChangeHandler(v: string | undefined) {
+		$sActiveTab = v ?? '';
+	}
 </script>
 
 <ModalChart />
@@ -33,7 +41,7 @@
 				<h2 class="text-3xl font-bold tracking-tight">Dashboard</h2>
 			</div>
 
-			<Tabs.Root class="space-y-4">
+			<Tabs.Root class="space-y-4" value={initialTab} onValueChange={onTabChangeHandler}>
 				<Tabs.List class="overflow-x-auto w-full justify-start">
 					<Tabs.Trigger value="screener">Screener</Tabs.Trigger>
 					<Tabs.Trigger value="tracking">Tracking</Tabs.Trigger>

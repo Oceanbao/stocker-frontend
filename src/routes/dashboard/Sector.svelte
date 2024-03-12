@@ -9,7 +9,7 @@
 	import type { TServerStock } from '$lib/server/types';
 
 	import { SECTORS } from './sectors';
-	import { sModalData, stockStore } from './store';
+	import { sActiveSector, sModalData, stockStore } from './store';
 
 	export let thenData: TServerStock[];
 
@@ -21,6 +21,10 @@
 	let loadingSectorData = false;
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';
+
+	$: {
+		$sActiveSector = sector;
+	}
 
 	function openDialog(ticker: string, name: string) {
 		$sModalData.ticker = ticker;

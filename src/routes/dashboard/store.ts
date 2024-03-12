@@ -23,6 +23,10 @@ export function createStoreStocks(initStocks: TServerStock[]) {
 		});
 	}
 
+	function getReadStock(ticker: string) {
+		return derived(store, ($store) => $store.find((x) => x.ticker === ticker));
+	}
+
 	function getReadStocksScreen() {
 		return derived(store, ($store) => $store.filter((x) => x.screenkdj >= 0));
 	}
@@ -70,6 +74,7 @@ export function createStoreStocks(initStocks: TServerStock[]) {
 	return {
 		...store,
 		addStocks,
+		getReadStock,
 		getReadStocksScreen,
 		getReadStocksTracking,
 		getReadStocksSector,
@@ -80,3 +85,6 @@ export function createStoreStocks(initStocks: TServerStock[]) {
 }
 
 export const stockStore = createStoreStocks([]);
+
+export const sActiveTab = writable<string>('');
+export const sActiveSector = writable<string>('');
