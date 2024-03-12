@@ -6,18 +6,19 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Select from '$lib/components/ui/select';
 	import * as Table from '$lib/components/ui/table';
+	import type { TServerStock } from '$lib/server/types';
 
 	import { SECTORS } from './sectors';
-	import { sModalData, stockStore, type TStockPage } from './store';
+	import { sModalData, stockStore } from './store';
 
-	export const thenData = undefined;
+	export let thenData: TServerStock[];
+
+	stockStore.addStocks(thenData);
+	$: sectorStocks = stockStore.getReadStocksSector(sector);
 
 	let sector = SECTORS[0];
 	let sectorFetched = [SECTORS[0]];
 	let loadingSectorData = false;
-
-	$: sectorStocks = stockStore.getReadStocksSector(sector);
-
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';
 
@@ -52,12 +53,12 @@
 		}
 	}
 
-	async function trackStockHandler(stock: TStockPage) {
-		if (stock.tracked) {
+	async function trackStockHandler(stock: TServerStock) {
+		if (stock.tracking) {
 			toast.promise(unTrackStock(stock), {
 				loading: 'Untracking...',
 				success: (data) => {
-					return `ticker ${stock.stock.ticker} untracked (${JSON.stringify(data)})`;
+					return `ticker ${stock.ticker} untracked (${JSON.stringify(data)})`;
 				},
 				error: (err) => {
 					return `Error: ${JSON.stringify(err)}`;
@@ -67,7 +68,7 @@
 			toast.promise(trackStock(stock), {
 				loading: 'tracking...',
 				success: (data) => {
-					return `ticker ${stock.stock.ticker} tracked (${JSON.stringify(data)})`;
+					return `ticker ${stock.ticker} tracked (${JSON.stringify(data)})`;
 				},
 				error: (err) => {
 					return `Error: ${JSON.stringify(err)}`;
@@ -76,10 +77,10 @@
 		}
 	}
 
-	async function trackStock(stock: TStockPage) {
-		loadingTrackStock = stock.stock.ticker;
+	async function trackStock(stock: TServerStock) {
+		loadingTrackStock = stock.ticker;
 		const baseUrl = '/api/track';
-		const resp = await fetch(`${baseUrl}?ticker=${stock.stock.ticker}`, {
+		const resp = await fetch(`${baseUrl}?ticker=${stock.ticker}`, {
 			method: 'POST'
 		});
 		try {
@@ -97,10 +98,10 @@
 		}
 	}
 
-	async function unTrackStock(stock: TStockPage) {
-		loadingTrackStock = stock.stock.ticker;
+	async function unTrackStock(stock: TServerStock) {
+		loadingTrackStock = stock.ticker;
 		const baseUrl = '/api/track';
-		const resp = await fetch(`${baseUrl}?ticker=${stock.stock.ticker}`, {
+		const resp = await fetch(`${baseUrl}?ticker=${stock.ticker}`, {
 			method: 'DELETE'
 		});
 		try {
@@ -182,73 +183,70 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each $sectorStocks as stock (stock.stock.ticker)}
+			{#each $sectorStocks as stock (stock.ticker)}
 				<Table.Row
-					class={loadingTrackStock === stock.stock.ticker ||
-					loadingDeleteStock === stock.stock.ticker
+					class={loadingTrackStock === stock.ticker || loadingDeleteStock === stock.ticker
 						? 'blur-sm pointer-events-none'
 						: ''}
 				>
 					<Table.Cell class="font-medium relative">
 						<div class="absolute top-0 left-0 flex gap-2">
-							<button on:click={() => deleteStock(stock.stock.ticker)}>
+							<button on:click={() => deleteStock(stock.ticker)}>
 								<Trash2 color="white" size="1rem" />
 							</button>
 
 							<button on:click={() => trackStockHandler(stock)}>
-								<Heart fill={`${stock.tracked ? 'red' : ''}`} size="1rem" />
+								<Heart fill={`${stock.tracking ? 'red' : ''}`} size="1rem" />
 							</button>
 						</div>
 
 						<Button
 							variant="secondary"
 							class="w-[100px]"
-							on:click={() => openDialog(stock.stock.ticker, stock.stock.name)}
+							on:click={() => openDialog(stock.ticker, stock.name)}
 						>
-							<p class={`${stock.tracked ? 'text-red-500' : ''}`}>
-								{stock.stock.name}
+							<p class={`${stock.tracking ? 'text-red-500' : ''}`}>
+								{stock.name}
 							</p>
 						</Button>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">sec</span>
 						<p>
-							{stock.stock.sector} ({stock.stock.sectortotal})
+							{stock.sector} ({stock.sectortotal})
 						</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">cap</span>
 						<p>
-							{(Math.pow(2, stock.stock.tradecap) / 100_000_000).toFixed(2)} ({stock.stock
-								.ranktotalcap})
+							{(Math.pow(2, stock.tradecap) / 100_000_000).toFixed(2)} ({stock.ranktotalcap})
 						</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">eps</span>
-						<p>{stock.stock.eps.toFixed(2)}</p>
+						<p>{stock.eps.toFixed(2)}</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">pe</span>
-						<p>{stock.stock.priceperearning / 100} ({stock.stock.rankper})</p>
+						<p>{stock.priceperearning / 100} ({stock.rankper})</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">roe</span>
-						<p>{stock.stock.roe.toFixed(2)} ({stock.stock.rankroe})</p>
+						<p>{stock.roe.toFixed(2)} ({stock.rankroe})</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">netp</span>
 						<p>
-							{(stock.stock.netprofit / 100_000_000).toFixed(2)} ({stock.stock.ranknetprofit}-{stock
-								.stock.ranknetmargin})
+							{(stock.netprofit / 100_000_000).toFixed(2)} ({stock.ranknetprofit}-{stock.ranknetmargin})
 						</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">gross</span>
-						<p>{stock.stock.grossprofitmargin.toFixed(2)} ({stock.stock.rankgrossmargin})</p>
+						<p>{stock.grossprofitmargin.toFixed(2)} ({stock.rankgrossmargin})</p>
 					</Table.Cell>
 					<Table.Cell class="text-right relative">
 						<span class="absolute top-1 right-1 text-xs text-gray-600">debt</span>
-						<p>{stock.stock.debtratio.toFixed(2)}</p>
+						<p>{stock.debtratio.toFixed(2)}</p>
 					</Table.Cell>
 				</Table.Row>
 			{/each}

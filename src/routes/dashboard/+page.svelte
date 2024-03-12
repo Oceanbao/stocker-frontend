@@ -2,51 +2,17 @@
 	import SkeletonA from '$lib/components/SkeletonA.svelte';
 	// import { cn, diffDay } from '$lib/utils';
 	import * as Tabs from '$lib/components/ui/tabs';
-	// import { applyAction, enhance } from '$app/forms';
-	import type { TScreen, TStock } from '$lib/server/types';
 
+	// import { applyAction, enhance } from '$app/forms';
 	import DashboardMainNav from './MainNav.svelte';
 	import ModalChart from './ModalChart.svelte';
 	import Screener from './Screener.svelte';
 	import Search from './Search.svelte';
 	import Sector from './Sector.svelte';
-	import { stockStore, type TStockPage } from './store';
 	import Tracking from './Tracking.svelte';
 	import UserNav from './UserNav.svelte';
 
 	export let data;
-
-	// FIXME this pile of shit
-	const allStocks: TStockPage[] = [];
-	data.recordsScreen.forEach((stockScreen: TScreen) => {
-		allStocks.push({
-			stock: stockScreen.stock,
-			kdj: stockScreen.kdj,
-			tracked: data.recordsTracking.some((x: TStock) => x.ticker === stockScreen.stock.ticker),
-			sector: stockScreen.stock.sector
-		});
-	});
-	data.recordsSector.forEach((stockSector: TStock) => {
-		if (!allStocks.some((x) => x.stock.ticker === stockSector.ticker)) {
-			allStocks.push({
-				stock: stockSector,
-				kdj: 0,
-				tracked: data.recordsTracking.some((x: TStock) => x.ticker === stockSector.ticker),
-				sector: stockSector.sector
-			});
-		}
-	});
-	data.recordsTracking.forEach((stockTracking: TStock) => {
-		if (!allStocks.some((x) => x.stock.ticker === stockTracking.ticker)) {
-			allStocks.push({
-				stock: stockTracking,
-				kdj: 0,
-				tracked: true,
-				sector: stockTracking.sector
-			});
-		}
-	});
-	$stockStore = [...allStocks.values()];
 </script>
 
 <ModalChart />

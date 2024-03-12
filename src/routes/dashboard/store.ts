@@ -1,13 +1,6 @@
 import { derived, writable } from 'svelte/store';
 
-import type { TStock } from '$lib/server/types';
-
-export type TStockPage = {
-	kdj: number;
-	sector: string;
-	stock: TStock;
-	tracked: boolean;
-};
+import type { TServerStock } from '$lib/server/types';
 
 export const sModalData = writable({
 	open: false,
@@ -16,54 +9,45 @@ export const sModalData = writable({
 	etf: false
 });
 
-export function createStoreStocks(initStocks: TStockPage[]) {
+export function createStoreStocks(initStocks: TServerStock[]) {
 	const store = writable(initStocks);
 
-	function addStocks(stocks: TStock[]) {
-		store.update((oldStocks) => {
-			// Check each new stock
-			// if exists, do nothing
-			// else, add as TStockPage object
-			const newStocks: TStockPage[] = [];
-			stocks.forEach((x) => {
-				if (!oldStocks.some((xx) => xx.stock.ticker === x.ticker)) {
-					newStocks.push({
-						stock: x,
-						kdj: 0,
-						tracked: false,
-						sector: x.sector
-					});
+	function addStocks(newStocks: TServerStock[]) {
+		store.update((allStocks) => {
+			newStocks.forEach((x) => {
+				if (!allStocks.some((xx) => xx.ticker === x.ticker)) {
+					allStocks.push(x);
 				}
 			});
-			return [...oldStocks, ...newStocks];
+			return allStocks;
 		});
 	}
 
 	function getReadStocksScreen() {
-		return derived(store, ($store) => $store.filter((x) => x.kdj !== 0));
+		return derived(store, ($store) => $store.filter((x) => x.screenkdj >= 0));
 	}
 
-	function getReadStocksTracked() {
-		return derived(store, ($store) => $store.filter((x) => x.tracked === true));
+	function getReadStocksTracking() {
+		return derived(store, ($store) => $store.filter((x) => x.tracking === true));
 	}
 
 	function getReadStocksSector(sector: string) {
 		return derived(store, ($store) => {
 			return $store
 				.filter((x) => x.sector === sector)
-				.sort((a, b) => a.stock.ranktotalcap - b.stock.ranktotalcap);
+				.sort((a, b) => a.ranktotalcap - b.ranktotalcap);
 		});
 	}
 
 	function deleteByTicker(ticker: string) {
-		store.update((stocks) => stocks.filter((s) => s.stock.ticker !== ticker));
+		store.update((stocks) => stocks.filter((s) => s.ticker !== ticker));
 	}
 
-	function trackByStock(stock: TStockPage) {
+	function trackByStock(stock: TServerStock) {
 		store.update((stocks) => {
 			return stocks.map((s) => {
-				if (s.stock.ticker === stock.stock.ticker) {
-					s.tracked = true;
+				if (s.ticker === stock.ticker) {
+					s.tracking = true;
 					return s;
 				}
 				return s;
@@ -71,11 +55,11 @@ export function createStoreStocks(initStocks: TStockPage[]) {
 		});
 	}
 
-	function unTrackByStock(stock: TStockPage) {
+	function unTrackByStock(stock: TServerStock) {
 		store.update((stocks) => {
 			return stocks.map((s) => {
-				if (s.stock.ticker === stock.stock.ticker) {
-					s.tracked = false;
+				if (s.ticker === stock.ticker) {
+					s.tracking = false;
 					return s;
 				}
 				return s;
@@ -87,7 +71,7 @@ export function createStoreStocks(initStocks: TStockPage[]) {
 		...store,
 		addStocks,
 		getReadStocksScreen,
-		getReadStocksTracked,
+		getReadStocksTracking,
 		getReadStocksSector,
 		deleteByTicker,
 		trackByStock,

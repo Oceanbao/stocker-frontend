@@ -4,6 +4,14 @@ import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async (event) => {
 	const user = event.locals.user;
+	if (!user) {
+		return {
+			user: undefined,
+			recordsScreen: undefined,
+			recordsTracking: undefined,
+			recordsSector: undefined
+		};
+	}
 
 	//TODO: better handle err at frontend - USE ZOD
 	const recordsScreen = event.locals.pb
@@ -29,19 +37,10 @@ export const load: LayoutServerLoad = async (event) => {
 			return { ...err };
 		});
 
-	if (user) {
-		return {
-			user,
-			recordsScreen: await recordsScreen,
-			recordsTracking: await recordsTracking,
-			recordsSector: await recordsSector
-		};
-	}
-
 	return {
-		user: undefined,
-		recordsScreen: undefined,
-		recordsTracking: undefined,
-		recordsSector: undefined
+		user,
+		recordsScreen: recordsScreen,
+		recordsTracking: recordsTracking,
+		recordsSector: recordsSector
 	};
 };

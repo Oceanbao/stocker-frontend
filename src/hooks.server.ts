@@ -17,6 +17,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	} catch (_) {
 		event.locals.pb.authStore.clear();
+		event.locals.user = undefined;
 	}
 
 	if (PROTECTED_ROUTES.includes(event.url.pathname)) {
