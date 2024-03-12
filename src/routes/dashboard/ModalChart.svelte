@@ -209,27 +209,29 @@
 			{#if loadingRequest}
 				<Loader2 class="animate-spin w-32 h-32" style="animation-direction: reverse" />
 			{:else}
-				<ChartStock
-					{candleData}
-					lineDataK={kdjData.map((x) => ({ time: x.time, value: x.k }))}
-					lineDataD={kdjData.map((x) => ({ time: x.time, value: x.d }))}
-					lineDataJ={kdjData.map((x) => ({ time: x.time, value: x.j }))}
-					lineDataMacdHist={macdData.map((x) => ({
-						time: x.time,
-						color: x.hist > 0 ? 'green' : 'red',
-						value: x.hist
-					}))}
-					lineDataMacdDiff={macdData.map((x) => ({
-						time: x.time,
-						value: x.diff
-					}))}
-					lineDataMacdDea={macdData.map((x) => ({
-						time: x.time,
-						value: x.dea
-					}))}
-					lineDataSma5={sma5Data}
-					lineDataSma20={sma20Data}
-				/>
+				{#key activeTicker}
+					<ChartStock
+						{candleData}
+						lineDataK={kdjData.map((x) => ({ time: x.time, value: x.k }))}
+						lineDataD={kdjData.map((x) => ({ time: x.time, value: x.d }))}
+						lineDataJ={kdjData.map((x) => ({ time: x.time, value: x.j }))}
+						lineDataMacdHist={macdData.map((x) => ({
+							time: x.time,
+							color: x.hist > 0 ? 'green' : 'red',
+							value: x.hist
+						}))}
+						lineDataMacdDiff={macdData.map((x) => ({
+							time: x.time,
+							value: x.diff
+						}))}
+						lineDataMacdDea={macdData.map((x) => ({
+							time: x.time,
+							value: x.dea
+						}))}
+						lineDataSma5={sma5Data}
+						lineDataSma20={sma20Data}
+					/>
+				{/key}
 			{/if}
 		</div>
 	</Dialog.Content>
