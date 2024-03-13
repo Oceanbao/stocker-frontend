@@ -11,8 +11,8 @@
 
 	export let thenData: TServerStock[];
 
-	stockStore.addStocks(thenData);
-	$: trackStocks = stockStore.getReadStocksTracking();
+	stockStore.addStocks(thenData, 'tracking');
+	const trackStocks = stockStore.getReadStocksTracking();
 
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';

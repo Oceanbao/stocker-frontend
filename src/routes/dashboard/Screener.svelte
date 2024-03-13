@@ -10,8 +10,8 @@
 
 	export let thenData: TServerStock[];
 
-	stockStore.addStocks(thenData);
-	$: screenStocks = stockStore.getReadStocksScreen();
+	stockStore.addStocks(thenData, 'screener');
+	const screenStocks = stockStore.getReadStocksScreen();
 
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';

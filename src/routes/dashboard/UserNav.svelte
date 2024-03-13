@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { toast } from 'svelte-sonner';
+
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
@@ -6,24 +8,26 @@
 	export let username: string;
 	export let useremail: string;
 
-	// async function runDeleHandler() {
-	// 	const deleTickers = tickers;
-	// 	const baseUrl = '/api/dele';
-	// 	const resp = await fetch(`${baseUrl}?tickers=${deleTickers}`, {
-	// 		method: 'POST'
-	// 	});
+	async function updateScreenHandler() {
+		const loadingToast = toast.loading('Updating screens ...');
 
-	// 	try {
-	// 		const body = await resp.json();
-	// 		if (body.message !== 'error') {
-	// 			console.log(body.data);
-	// 		} else {
-	// 			console.log(body.error);
-	// 		}
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// }
+		try {
+			const url = '/api/dele';
+			const resp = await fetch(url, {
+				method: 'GET'
+			});
+			toast.dismiss(loadingToast);
+
+			const { data } = await resp.json();
+			if (data.message === 'error') {
+				toast.error(data.error);
+				return;
+			}
+			toast.success('Screen updated.');
+		} catch (err) {
+			toast.error(`error: ${err}`);
+		}
+	}
 </script>
 
 <DropdownMenu.Root>
@@ -43,22 +47,22 @@
 			</div>
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<!-- <DropdownMenu.Group> -->
-		<!-- 	<DropdownMenu.Item> -->
-		<!-- 		Profile -->
-		<!-- 		<DropdownMenu.Shortcut>⇧⌘P</DropdownMenu.Shortcut> -->
-		<!-- 	</DropdownMenu.Item> -->
-		<!-- 	<DropdownMenu.Item> -->
-		<!-- 		Billing -->
-		<!-- 		<DropdownMenu.Shortcut>⌘B</DropdownMenu.Shortcut> -->
-		<!-- 	</DropdownMenu.Item> -->
-		<!-- 	<DropdownMenu.Item> -->
-		<!-- 		Settings -->
-		<!-- 		<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut> -->
-		<!-- 	</DropdownMenu.Item> -->
-		<!-- <DropdownMenu.Item on:click={runDeleHandler}>Run dele</DropdownMenu.Item> -->
-		<!-- </DropdownMenu.Group> -->
-		<!-- <DropdownMenu.Separator /> -->
+		<DropdownMenu.Group>
+			<!-- 	<DropdownMenu.Item> -->
+			<!-- 		Profile -->
+			<!-- 		<DropdownMenu.Shortcut>⇧⌘P</DropdownMenu.Shortcut> -->
+			<!-- 	</DropdownMenu.Item> -->
+			<!-- 	<DropdownMenu.Item> -->
+			<!-- 		Billing -->
+			<!-- 		<DropdownMenu.Shortcut>⌘B</DropdownMenu.Shortcut> -->
+			<!-- 	</DropdownMenu.Item> -->
+			<!-- 	<DropdownMenu.Item> -->
+			<!-- 		Settings -->
+			<!-- 		<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut> -->
+			<!-- 	</DropdownMenu.Item> -->
+			<DropdownMenu.Item on:click={updateScreenHandler}>Update Screens</DropdownMenu.Item>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
 		<a href="/logout">
 			<DropdownMenu.Item>
 				Log out

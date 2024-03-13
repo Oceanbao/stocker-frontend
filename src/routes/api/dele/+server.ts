@@ -1,16 +1,16 @@
-// import { json, type RequestHandler } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
 
-// export const GET: RequestHandler = async (event) => {
-// 	const url = '/dele/updatestocks';
-// 	const response = await event.locals.pb?.send(url, {
-// 		method: 'GET'
-// 	});
+export const GET: RequestHandler = async (event) => {
+	const url = '/dele/updatescreen';
+	const response = await event.locals.pb?.send(url, {
+		method: 'GET'
+	});
 
-// 	return json({
-// 		message: 'ok',
-// 		data: response
-// 	});
-// };
+	return json({
+		message: 'ok',
+		data: response
+	});
+};
 
 // export const POST: RequestHandler = async (event) => {
 // 	const tickers = event.url.searchParams.get('tickers');

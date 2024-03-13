@@ -12,11 +12,31 @@ export const sModalData = writable({
 export function createStoreStocks(initStocks: TServerStock[]) {
 	const store = writable(initStocks);
 
-	function addStocks(newStocks: TServerStock[]) {
+	function addStocks(newStocks: TServerStock[], type: 'screener' | 'tracking' | 'sector') {
+		console.log(type);
+		console.log(newStocks.length);
+		// TODO: someday fix this shit!
+		if (type === 'screener') {
+			store.update((allStocks) => {
+				const updatedStocks: TServerStock[] = [];
+				newStocks.forEach((newStock) => {
+					const existedStock = allStocks.find((x) => x.ticker === newStock.ticker);
+					if (!existedStock) {
+						updatedStocks.push(newStock);
+					} else {
+						updatedStocks.push({ ...existedStock, ...{ screenkdj: newStock.screenkdj } });
+					}
+				});
+				return updatedStocks;
+			});
+
+			return;
+		}
+
 		store.update((allStocks) => {
-			newStocks.forEach((x) => {
-				if (!allStocks.some((xx) => xx.ticker === x.ticker)) {
-					allStocks.push(x);
+			newStocks.forEach((newStock) => {
+				if (!allStocks.some((oldStock) => oldStock.ticker === newStock.ticker)) {
+					allStocks.push(newStock);
 				}
 			});
 			return allStocks;
@@ -28,7 +48,7 @@ export function createStoreStocks(initStocks: TServerStock[]) {
 	}
 
 	function getReadStocksScreen() {
-		return derived(store, ($store) => $store.filter((x) => x.screenkdj >= 0));
+		return derived(store, ($store) => $store.filter((x) => x.screenkdj !== undefined));
 	}
 
 	function getReadStocksTracking() {

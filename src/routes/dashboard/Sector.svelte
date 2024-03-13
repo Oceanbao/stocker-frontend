@@ -13,7 +13,7 @@
 
 	export let thenData: TServerStock[];
 
-	stockStore.addStocks(thenData);
+	stockStore.addStocks(thenData, 'sector');
 	$: sectorStocks = stockStore.getReadStocksSector(sector);
 
 	let sector = SECTORS[0];
@@ -147,7 +147,7 @@
 				if (body.message !== 'error') {
 					// NOTE: important place and steps to make deletion takes affect.
 					// FIXME: better shape
-					stockStore.addStocks(body.data.data);
+					stockStore.addStocks(body.data.data, 'sector');
 				}
 			} catch (err) {
 				console.log(err);
