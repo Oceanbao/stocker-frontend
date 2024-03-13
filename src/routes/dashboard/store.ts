@@ -18,25 +18,26 @@ export function createStoreStocks(initStocks: TServerStock[]) {
 		// TODO: someday fix this shit!
 		if (type === 'screener') {
 			store.update((allStocks) => {
-				const updatedStocks: TServerStock[] = [];
-				newStocks.forEach((newStock) => {
-					const existedStock = allStocks.find((x) => x.ticker === newStock.ticker);
-					if (!existedStock) {
-						updatedStocks.push(newStock);
+				newStocks.forEach((newS) => {
+					const oldIndex = allStocks.findIndex((oldS) => oldS.ticker === newS.ticker);
+					if (oldIndex === -1) {
+						// Not found, push.
+						allStocks.push(newS);
 					} else {
-						updatedStocks.push({ ...existedStock, ...{ screenkdj: newStock.screenkdj } });
+						// Found, replace.
+						allStocks[oldIndex] = newS;
 					}
 				});
-				return updatedStocks;
+				return allStocks;
 			});
-
 			return;
 		}
 
 		store.update((allStocks) => {
-			newStocks.forEach((newStock) => {
-				if (!allStocks.some((oldStock) => oldStock.ticker === newStock.ticker)) {
-					allStocks.push(newStock);
+			newStocks.forEach((newS) => {
+				const existedStock = allStocks.find((oldS) => oldS.ticker === newS.ticker);
+				if (!existedStock) {
+					allStocks.push(newS);
 				}
 			});
 			return allStocks;
