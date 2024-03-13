@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 
@@ -21,7 +22,7 @@
 		<Card.Footer class="flex justify-center">
 			{#if data.user}
 				<div class="flex flex-col">
-					<p>You're logged in as: {data.user.name}</p>
+					<p>You're logged in as: <Badge>{data.user.name}</Badge></p>
 					<Button href="/dashboard" class="my-4">Dashboard</Button>
 				</div>
 			{:else}

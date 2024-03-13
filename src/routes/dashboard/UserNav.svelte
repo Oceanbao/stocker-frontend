@@ -24,25 +24,6 @@
 	// 		console.log(err);
 	// 	}
 	// }
-
-	// async function search() {
-	// 	const baseUrl = '/api/stock';
-	// 	const resp = await fetch(`${baseUrl}`, {
-	// 		method: 'GET'
-	// 	});
-
-	// 	try {
-	// 		const body = await resp.json();
-	// 		if (body.message !== 'error') {
-	// 			const tickers = body.data.map((x) => x.ticker).join(',');
-	// 			console.log(tickers);
-	// 		} else {
-	// 			console.log(body.error);
-	// 		}
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// }
 </script>
 
 <DropdownMenu.Root>

@@ -1,7 +1,56 @@
 <script lang="ts">
+	import { toast } from 'svelte-sonner';
+
 	import { Input } from '$lib/components/ui/input';
+	import type { TServerStock } from '$lib/server/types';
+
+	import ModalChartSearch from './ModalChartSearch.svelte';
+	import ModalSearch from './ModalSearch.svelte';
+
+	let inputValue = '';
+	let openModalChart = false;
+	let openModalSearch = false;
+	let serverStock: TServerStock;
+
+	async function submitHandler() {
+		const loadingToast = toast.loading('Searching...');
+
+		const ticker = inputValue;
+
+		const baseUrl = '/api/stock';
+
+		try {
+			const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+				method: 'GET'
+			});
+			toast.dismiss(loadingToast);
+
+			const { data } = await resp.json();
+			if (data.message === 'error') {
+				toast.error(data.error);
+				openModalSearch = true;
+				return;
+			}
+			toast.success('Found.');
+			serverStock = data.data;
+			openModalChart = true;
+		} catch (err) {
+			toast.error(`error: ${err}`);
+		}
+
+		inputValue = '';
+	}
 </script>
 
-<div>
-	<Input type="search" placeholder="Search..." class="h-9 md:w-[100px] lg:w-[300px]" />
-</div>
+<ModalChartSearch bind:openModalChart activeStockServer={serverStock} />
+<ModalSearch bind:openModalSearch />
+
+<form on:submit={submitHandler} class="flex w-full max-w-sm items-center space-x-2">
+	<Input
+		type="search"
+		placeholder="Search..."
+		bind:value={inputValue}
+		on:focus={() => (inputValue = '')}
+		required
+	/>
+</form>
