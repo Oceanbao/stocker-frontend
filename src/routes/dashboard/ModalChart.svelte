@@ -1,8 +1,9 @@
 <script lang="ts">
 	import './modelchart.css';
 
-	import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-svelte';
+	import { ChevronLeft, ChevronRight, Heart, Loader2, Trash2 } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 
 	import {
 		computeKDJ,
@@ -168,6 +169,99 @@
 			window.removeEventListener('keydown', keyDownHandler);
 		};
 	});
+
+	async function deleteStock(ticker: string) {
+		// loadingDeleteStock = ticker;
+		const loadingToast = toast.loading(`Deleting '${ticker}' and all its data.`);
+
+		const baseUrl = '/api/stock';
+		const resp = await fetch(`${baseUrl}?ticker=${ticker}`, {
+			method: 'DELETE'
+		});
+
+		try {
+			const body = await resp.json();
+			if (body.message !== 'error') {
+				stockStore.deleteByTicker(ticker);
+				$sModalData.open = false;
+				toast.success(`Deleted '${ticker}'`);
+			} else {
+				toast.error(`Error: ${body.error}`);
+			}
+		} catch (err) {
+			toast.error(`Error: ${err}`);
+		} finally {
+			// loadingDeleteStock = '';
+			toast.dismiss(loadingToast);
+		}
+	}
+
+	async function trackStockHandler(stock: TServerStock) {
+		if (stock.tracking) {
+			toast.promise(unTrackStock(stock), {
+				loading: 'Untracking...',
+				success: (data) => {
+					return `ticker ${stock.ticker} untracked (${JSON.stringify(data)})`;
+				},
+				error: (err) => {
+					return `Error: ${JSON.stringify(err)}`;
+				}
+			});
+		} else {
+			toast.promise(trackStock(stock), {
+				loading: 'tracking...',
+				success: (data) => {
+					return `ticker ${stock.ticker} tracked (${JSON.stringify(data)})`;
+				},
+				error: (err) => {
+					return `Error: ${JSON.stringify(err)}`;
+				}
+			});
+		}
+	}
+
+	async function trackStock(stock: TServerStock) {
+		// loadingTrackStock = stock.ticker;
+		const baseUrl = '/api/track';
+		const resp = await fetch(`${baseUrl}?ticker=${stock.ticker}`, {
+			method: 'POST'
+		});
+		// loadingTrackStock = '';
+		try {
+			const body = await resp.json();
+			//FIXME: need to revamp and cleanup how API communicates.
+			if (body.message !== 'error') {
+				stockStore.trackByStock(stock);
+				return Promise.resolve(body.data);
+			}
+			return Promise.reject(body.error);
+		} catch (err) {
+			return Promise.reject(err);
+		} finally {
+			// loadingTrackStock = '';
+		}
+	}
+
+	async function unTrackStock(stock: TServerStock) {
+		// loadingTrackStock = stock.ticker;
+		const baseUrl = '/api/track';
+		const resp = await fetch(`${baseUrl}?ticker=${stock.ticker}`, {
+			method: 'DELETE'
+		});
+		try {
+			const body = await resp.json();
+			if (body.message !== 'error') {
+				// NOTE: important place and steps to make deletion takes affect.
+				stockStore.unTrackByStock(stock);
+				return Promise.resolve(body.data);
+			}
+			return Promise.reject(body.error);
+		} catch (err) {
+			return Promise.reject(err);
+		} finally {
+			// loadingTrackStock = '';
+		}
+	}
 </script>
 
 <Dialog.Root open={$sModalData.open} onOpenChange={() => ($sModalData.open = false)}>
@@ -181,7 +275,25 @@
 		style=""
 	>
 		<Dialog.Header>
-			<Dialog.Title class="text-sm lg:text-xl">{activeTicker} - {activeName}</Dialog.Title>
+			<Dialog.Title class="flex gap-4 text-sm lg:text-xl">
+				<span>{activeTicker} - {activeName}</span>
+				<button
+					on:click={() => {
+						if (activeStock) deleteStock(activeStock?.ticker);
+					}}
+				>
+					<Trash2 color="white" size="1rem" />
+				</button>
+				{#if $sActiveTab !== 'tracking'}
+					<button
+						on:click={() => {
+							if (activeStock) trackStockHandler(activeStock);
+						}}
+					>
+						<Heart fill={`${activeStock?.tracking ? 'red' : ''}`} size="1rem" />
+					</button>
+				{/if}
+			</Dialog.Title>
 			<Dialog.Description class="flex flex-wrap gap-2 [&_span]:text-xs lg:[&_span]:text-lg">
 				{#if activeStock}
 					<Badge variant="secondary" class="w-fit h-fit"
