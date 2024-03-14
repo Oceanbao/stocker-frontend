@@ -41,27 +41,36 @@
 	let activeTabStocks: TServerStock[];
 	let sActiveTabStocks;
 	let activeTickerIndexInTab: number;
-
-	// $: {
-	// 	console.log($sActiveTab);
-	// 	sActiveTabStocks = getActiveTabStocks($sActiveTab);
-	// 	console.log($sActiveTabStocks);
-	// 	activeTabStocks = $sActiveTabStocks ?? [];
-	// }
+	let activeTickerTracking: boolean;
 
 	$: if ($sModalData.open) {
-		activeTicker = $sModalData.ticker;
-		activeName = $sModalData.name;
+		// Only run on modal open.
+		if (!activeTicker) {
+			activeTicker = $sModalData.ticker;
+			activeName = $sModalData.name;
+			sActiveTabStocks = getActiveTabStocks($sActiveTab);
+			activeTabStocks = $sActiveTabStocks ?? [];
+			activeTickerIndexInTab = activeTabStocks.findIndex((x) => x.ticker === activeTicker);
+			loadData(activeTicker);
+		}
+		// For refreshing tracking flag.
 		sActiveTabStocks = getActiveTabStocks($sActiveTab);
 		activeTabStocks = $sActiveTabStocks ?? [];
-		activeTickerIndexInTab = activeTabStocks.findIndex((x) => x.ticker === activeTicker);
-		loadData();
+		const activeStockNew = activeTabStocks.find((x) => x.ticker === activeTicker);
+		if (activeStockNew) activeTickerTracking = activeStockNew.tracking;
 	}
 
-	$: if (activeTickerIndexInTab !== undefined) {
+	function closeModalHandler() {
+		$sModalData.open = false;
+		activeTicker = '';
+	}
+
+	$: if (activeTickerIndexInTab !== undefined) refreshData();
+
+	function refreshData() {
 		activeTicker = activeTabStocks[activeTickerIndexInTab].ticker;
 		activeName = activeTabStocks[activeTickerIndexInTab].name;
-		loadData();
+		loadData(activeTicker);
 	}
 
 	function getActiveTabStocks(tab: string) {
@@ -75,13 +84,13 @@
 		}
 	}
 
-	async function loadData() {
+	async function loadData(ticker: string) {
 		// Reset dialog states
 		loadingRequest = true;
 
-		let dataStored = dailyCache.get(activeTicker);
+		let dataStored = dailyCache.get(ticker);
 		if (!dataStored) {
-			dataStored = await fetchDaily(activeTicker);
+			dataStored = await fetchDaily(ticker);
 			if (!dataStored) {
 				console.log('ERROR: failed to fetch `daily` data');
 				loadingRequest = false;
@@ -90,7 +99,7 @@
 			dailyCache.set(activeTicker, dataStored);
 		}
 
-		activeStock = $stockStore.find((x) => x.ticker === activeTicker);
+		activeStock = $stockStore.find((x) => x.ticker === ticker);
 
 		//TODO: could improve by cahcing these.
 		candleData = dataStored?.map((x) => ({
@@ -264,7 +273,7 @@
 	}
 </script>
 
-<Dialog.Root open={$sModalData.open} onOpenChange={() => ($sModalData.open = false)}>
+<Dialog.Root open={$sModalData.open} onOpenChange={closeModalHandler}>
 	<Dialog.Content
 		class={cn(
 			'flex flex-col border border-blue-400 rounded-lg h-[100dvh] w-[100dvw] lg:h-[90%] lg:max-w-[90%]',
@@ -290,7 +299,7 @@
 							if (activeStock) trackStockHandler(activeStock);
 						}}
 					>
-						<Heart fill={`${activeStock?.tracking ? 'red' : ''}`} size="1rem" />
+						<Heart fill={`${activeTickerTracking ? 'red' : ''}`} size="1rem" />
 					</button>
 				{/if}
 			</Dialog.Title>
