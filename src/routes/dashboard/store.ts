@@ -49,7 +49,10 @@ export function createStoreStocks(initStocks: TServerStock[]) {
 	}
 
 	function getReadStocksScreen() {
-		return derived(store, ($store) => $store.filter((x) => x.screenkdj !== undefined));
+		return derived(store, ($store) => {
+			const newStore = $store.filter((x) => x.screenkdj !== undefined);
+			return newStore.sort((a, b) => a.screenkdj - b.screenkdj);
+		});
 	}
 
 	function getReadStocksTracking() {

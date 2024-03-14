@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './modelchart.css';
 
-	import { Loader2 } from 'lucide-svelte';
+	import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	import {
@@ -138,6 +138,17 @@
 		}
 	}
 
+	function keyDownMobileHandler(position: 'left' | 'right') {
+		switch (position) {
+			case 'right':
+				activeTickerIndexInTab = getRightIndex(activeTickerIndexInTab);
+				break;
+			case 'left':
+				activeTickerIndexInTab = getLeftIndex(activeTickerIndexInTab);
+				break;
+		}
+	}
+
 	function getRightIndex(currentIndex: number) {
 		const lastIndex = activeTabStocks.length - 1;
 		const nextIndex = currentIndex + 1;
@@ -206,6 +217,12 @@
 			</Dialog.Description>
 		</Dialog.Header>
 		<div class="grid w-full h-full place-items-center">
+			<button class="absolute left-0 top-1/2 z-50" on:click={() => keyDownMobileHandler('left')}>
+				<ChevronLeft class="size-14 opacity-80 text-blue-500" />
+			</button>
+			<button class="absolute right-0 top-1/2 z-50" on:click={() => keyDownMobileHandler('right')}>
+				<ChevronRight class="size-14 opacity-80 text-blue-500" />
+			</button>
 			{#if loadingRequest}
 				<Loader2 class="animate-spin w-32 h-32" style="animation-direction: reverse" />
 			{:else}
