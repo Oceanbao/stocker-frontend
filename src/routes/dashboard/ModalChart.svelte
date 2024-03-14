@@ -192,7 +192,7 @@
 			const body = await resp.json();
 			if (body.message !== 'error') {
 				stockStore.deleteByTicker(ticker);
-				$sModalData.open = false;
+				closeModalHandler();
 				toast.success(`Deleted '${ticker}'`);
 			} else {
 				toast.error(`Error: ${body.error}`);
