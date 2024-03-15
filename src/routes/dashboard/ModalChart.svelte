@@ -43,6 +43,7 @@
 	let activeTickerIndexInTab: number;
 	let activeTickerTracking: boolean;
 
+	// FIXME: fix this shit.
 	$: if ($sModalData.open) {
 		// Only run on modal open.
 		if (!activeTicker) {
@@ -56,6 +57,7 @@
 		// For refreshing tracking flag.
 		sActiveTabStocks = getActiveTabStocks($sActiveTab);
 		activeTabStocks = $sActiveTabStocks ?? [];
+		if (activeTickerIndexInTab !== undefined) refreshData();
 		const activeStockNew = activeTabStocks.find((x) => x.ticker === activeTicker);
 		if (activeStockNew) activeTickerTracking = activeStockNew.tracking;
 	}
@@ -64,8 +66,6 @@
 		$sModalData.open = false;
 		activeTicker = '';
 	}
-
-	$: if (activeTickerIndexInTab !== undefined) refreshData();
 
 	function refreshData() {
 		activeTicker = activeTabStocks[activeTickerIndexInTab].ticker;
@@ -138,6 +138,7 @@
 	}
 
 	function keyDownHandler(event: KeyboardEvent) {
+		if (!$sModalData.open) return;
 		switch (event.key) {
 			case 'ArrowRight':
 				activeTickerIndexInTab = getRightIndex(activeTickerIndexInTab);
@@ -149,6 +150,7 @@
 	}
 
 	function keyDownMobileHandler(position: 'left' | 'right') {
+		if (!$sModalData.open) return;
 		switch (position) {
 			case 'right':
 				activeTickerIndexInTab = getRightIndex(activeTickerIndexInTab);
