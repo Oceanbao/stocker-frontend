@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Dialog } from 'bits-ui';
 	import { Heart, Trash2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 
 	import { Button } from '$lib/components/ui/button';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Table from '$lib/components/ui/table';
 	import type { TServerStock } from '$lib/server/types';
 

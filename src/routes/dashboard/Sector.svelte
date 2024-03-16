@@ -4,6 +4,7 @@
 	import { toast } from 'svelte-sonner';
 
 	import { Button } from '$lib/components/ui/button';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Select from '$lib/components/ui/select';
 	import * as Table from '$lib/components/ui/table';
 	import type { TServerStock } from '$lib/server/types';
@@ -21,6 +22,7 @@
 	let loadingSectorData = false;
 	let loadingTrackStock = '';
 	let loadingDeleteStock = '';
+	let openModal = false;
 
 	$: {
 		$sActiveSector = sector;
@@ -157,9 +159,26 @@
 		}
 		loadingSectorData = false;
 	}
+
+	function openModalHandler() {
+		openModal = !openModal;
+	}
 </script>
 
+<Dialog.Root open={openModal}>
+	<Dialog.Content class="border border-blue-400 rounded-lg">
+		<div class="grid grid-cols-5 gap-4">
+			{#each $sectorStocks as stock (stock.ticker)}
+				<div>{stock.name}<br />{stock.ticker}</div>
+			{/each}
+		</div>
+	</Dialog.Content>
+</Dialog.Root>
+
 <div class="grid place-items-center lg:max-w-7xl lg:mx-auto">
+	<Button variant="secondary" class="hidden md:flex w-[100px]" on:click={openModalHandler}>
+		<p>Open Modal</p>
+	</Button>
 	<p>{sector} ({$sectorStocks.length})</p>
 	<Select.Root preventScroll={false} onSelectedChange={(v) => changeSectorHandler(v)}>
 		<Select.Trigger>
