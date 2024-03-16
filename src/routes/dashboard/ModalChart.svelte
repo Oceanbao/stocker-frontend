@@ -137,20 +137,25 @@
 		}
 	}
 
-	function keyDownHandler(event: KeyboardEvent) {
+	function keyDownHandler(e: KeyboardEvent) {
 		if (!$sModalData.open) return;
-		switch (event.key) {
+		switch (e.key) {
 			case 'ArrowRight':
 				activeTickerIndexInTab = getRightIndex(activeTickerIndexInTab);
 				break;
 			case 'ArrowLeft':
 				activeTickerIndexInTab = getLeftIndex(activeTickerIndexInTab);
 				break;
+			case 'D':
+				if (activeStock) deleteStock(activeStock.ticker);
+				break;
+			case 'T':
+				if (activeStock) trackStockHandler(activeStock);
+				break;
 		}
 	}
 
 	function keyDownMobileHandler(position: 'left' | 'right') {
-		if (!$sModalData.open) return;
 		switch (position) {
 			case 'right':
 				activeTickerIndexInTab = getRightIndex(activeTickerIndexInTab);
@@ -283,7 +288,6 @@
 			'[&_.lucide-x]:w-10',
 			'[&_.lucide-x]:h-10'
 		)}
-		style=""
 	>
 		<Dialog.Header>
 			<Dialog.Title class="flex gap-4 text-sm lg:text-xl">
