@@ -165,7 +165,7 @@
 	}
 </script>
 
-<Dialog.Root open={openModal}>
+<Dialog.Root open={openModal} onOpenChange={openModalHandler}>
 	<Dialog.Content class="border border-blue-400 rounded-lg">
 		<div class="grid grid-cols-5 gap-4">
 			{#each $sectorStocks as stock (stock.ticker)}

@@ -138,7 +138,7 @@
 	}
 
 	function keyDownHandler(e: KeyboardEvent) {
-		if (!$sModalData.open) return;
+		if (!$sModalData.open || loadingRequest) return;
 		switch (e.key) {
 			case 'ArrowRight':
 				activeTickerIndexInTab = getRightIndex(activeTickerIndexInTab);
@@ -293,6 +293,7 @@
 			<Dialog.Title class="flex gap-4 text-sm lg:text-xl">
 				<span>{activeTicker} - {activeName}</span>
 				<button
+					tabindex={-1}
 					on:click={() => {
 						if (activeStock) deleteStock(activeStock?.ticker);
 					}}
@@ -301,6 +302,7 @@
 				</button>
 				{#if $sActiveTab !== 'tracking'}
 					<button
+						tabindex={-1}
 						on:click={() => {
 							if (activeStock) trackStockHandler(activeStock);
 						}}
@@ -344,12 +346,17 @@
 			</Dialog.Description>
 		</Dialog.Header>
 		<div class="grid w-full h-full place-items-center">
-			<button class="absolute left-0 top-1/2 z-50" on:click={() => keyDownMobileHandler('left')}>
-				<ChevronLeft class="size-14 opacity-80 text-blue-500" />
-			</button>
-			<button class="absolute right-0 top-1/2 z-50" on:click={() => keyDownMobileHandler('right')}>
-				<ChevronRight class="size-14 opacity-80 text-blue-500" />
-			</button>
+			{#if !loadingRequest}
+				<button class="absolute left-0 top-1/2 z-50" on:click={() => keyDownMobileHandler('left')}>
+					<ChevronLeft class="size-14 opacity-80 text-blue-500" />
+				</button>
+				<button
+					class="absolute right-0 top-1/2 z-50"
+					on:click={() => keyDownMobileHandler('right')}
+				>
+					<ChevronRight class="size-14 opacity-80 text-blue-500" />
+				</button>
+			{/if}
 			{#if loadingRequest}
 				<Loader2 class="animate-spin w-32 h-32" style="animation-direction: reverse" />
 			{:else}
