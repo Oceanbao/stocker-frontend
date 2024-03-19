@@ -8,11 +8,13 @@
 	import { Label } from '$lib/components/ui/label';
 
 	export let openModalSearch: boolean;
+	export let openModalSearchChartTicker = '';
 
 	let inputValue = '';
 	let foundTicker = '';
 	let foundName = '';
 	let disableAdd = false;
+	let tickerCreated = '';
 
 	async function submitHandler(e: KeyboardEvent) {
 		if (e.key !== 'Enter') return;
@@ -67,6 +69,7 @@
 			}
 			toast.success('Created.');
 			disableAdd = true;
+			tickerCreated = ticker;
 		} catch (err) {
 			toast.error(`error: ${err}`);
 		}
@@ -74,10 +77,20 @@
 		inputValue = '';
 	}
 
-	function clearModal() {
+	$: console.log(openModalSearch, foundTicker, tickerCreated);
+
+	async function clearModal() {
 		openModalSearch = false;
 		foundTicker = '';
 		foundName = '';
+		tickerCreated = '';
+		disableAdd = false;
+	}
+
+	function openTickerModalHandler() {
+		openModalSearchChartTicker = tickerCreated;
+		// FIXME
+		clearModal();
 	}
 </script>
 
@@ -104,12 +117,17 @@
 						{foundTicker}
 						{foundName}
 					</p>
-					<Button
-						type="submit"
-						variant="secondary"
-						on:click={createTickerHandler}
-						disabled={disableAdd}>Add</Button
-					>
+					{#if tickerCreated}
+						<Button type="submit" variant="secondary" on:click={openTickerModalHandler}>Open</Button
+						>
+					{:else}
+						<Button
+							type="submit"
+							variant="secondary"
+							on:click={createTickerHandler}
+							disabled={disableAdd}>Add</Button
+						>
+					{/if}
 				</Badge>
 			{/if}
 		</div>

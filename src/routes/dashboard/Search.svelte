@@ -10,7 +10,14 @@
 	let inputValue = '';
 	let openModalChart = false;
 	let openModalSearch = false;
+	let openModalSearchChartTicker = '';
 	let serverStock: TServerStock;
+
+	$: if (openModalSearchChartTicker) {
+		console.log('open');
+		inputValue = openModalSearchChartTicker;
+		submitHandler();
+	}
 
 	async function submitHandler() {
 		const loadingToast = toast.loading('Searching...');
@@ -43,7 +50,7 @@
 </script>
 
 <ModalChartSearch bind:openModalChart {serverStock} />
-<ModalSearch bind:openModalSearch />
+<ModalSearch bind:openModalSearch bind:openModalSearchChartTicker />
 
 <form on:submit={submitHandler} class="flex w-full max-w-sm items-center space-x-2">
 	<Input
