@@ -42,7 +42,7 @@
 	}
 </script>
 
-<ModalChartSearch bind:openModalChart activeStockServer={serverStock} />
+<ModalChartSearch bind:openModalChart {serverStock} />
 <ModalSearch bind:openModalSearch />
 
 <form on:submit={submitHandler} class="flex w-full max-w-sm items-center space-x-2">
